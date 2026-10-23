@@ -61,6 +61,32 @@ const fallbackSheets = [
   },
 ];
 
+const GUEST_STORAGE_KEY = "codetrack_guest_solved_sheet";
+
+const getGuestSolvedMap = () => {
+  try {
+    const raw = localStorage.getItem(GUEST_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
+const saveGuestProblem = (platform, title, status) => {
+  try {
+    const map = getGuestSolvedMap();
+    const key = `${(platform || "leetcode").toLowerCase()}:${title.toLowerCase().trim()}`;
+    if (status === "solved") {
+      map[key] = true;
+    } else {
+      delete map[key];
+    }
+    localStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify(map));
+  } catch (err) {
+    console.warn("Could not save to localStorage:", err);
+  }
+};
+
 const Sheets = () => {
   const { isAuthenticated } = useAuth();
   const [sheetsList, setSheetsList] = useState(fallbackSheets);
@@ -72,6 +98,7 @@ const Sheets = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [expandedPhases, setExpandedPhases] = useState({ 1: true, 2: true });
   const [toastMessage, setToastMessage] = useState({ text: "", type: "" });
+  const [autoSaveStatus, setAutoSaveStatus] = useState("idle"); // 'idle' | 'saving' | 'saved'
 
   const showToast = (text, type = "success") => {
     setToastMessage({ text, type });
@@ -109,12 +136,93 @@ const Sheets = () => {
       try {
         const res = await sheetApi.getSheetById(selectedSheetId);
         if (active && res?.success && res.data) {
-          setCurrentSheet(res.data);
+          let sheetData = res.data;
+
+          // Overlay guest progress if not logged in
+          if (!isAuthenticated) {
+            const guestMap = getGuestSolvedMap();
+            const currentPlat = (
+              sheetData.platform || selectedSheetId
+            ).toLowerCase();
+            let totalGuestSolved = 0;
+
+            const updatedPhases = sheetData.phases.map((phase) => {
+              let phaseSolved = 0;
+              const updatedTopics = phase.topics.map((topic) => {
+                let topicSolved = 0;
+                const updatedProblems = topic.problems.map((p) => {
+                  const key = `${currentPlat}:${p.title.toLowerCase().trim()}`;
+                  const isSolved = Boolean(guestMap[key]);
+                  if (isSolved) topicSolved++;
+                  return {
+                    ...p,
+                    status: isSolved ? "solved" : "todo",
+                    isSolved,
+                  };
+                });
+                phaseSolved += topicSolved;
+                return {
+                  ...topic,
+                  problems: updatedProblems,
+                  solvedCount: topicSolved,
+                  percentage:
+                    topic.totalCount > 0
+                      ? Math.round((topicSolved / topic.totalCount) * 100)
+                      : 0,
+                };
+              });
+              totalGuestSolved += phaseSolved;
+              return {
+                ...phase,
+                topics: updatedTopics,
+                solvedCount: phaseSolved,
+                percentage:
+                  phase.totalCount > 0
+                    ? Math.round((phaseSolved / phase.totalCount) * 100)
+                    : 0,
+              };
+            });
+
+            sheetData = {
+              ...sheetData,
+              phases: updatedPhases,
+              solvedProblems: totalGuestSolved,
+              percentage:
+                sheetData.totalProblems > 0
+                  ? Math.round(
+                      (totalGuestSolved / sheetData.totalProblems) * 100,
+                    )
+                  : 0,
+            };
+          } else {
+            // If logged in, sync any stored guest progress to cloud
+            const guestMap = getGuestSolvedMap();
+            const keys = Object.keys(guestMap);
+            if (keys.length > 0) {
+              Promise.all(
+                keys.map((k) => {
+                  const [plat, ...titleParts] = k.split(":");
+                  return sheetApi.trackProblem({
+                    title: titleParts.join(":"),
+                    platform: plat,
+                    status: "solved",
+                  });
+                }),
+              )
+                .then(() => {
+                  localStorage.removeItem(GUEST_STORAGE_KEY);
+                })
+                .catch(() => null);
+            }
+          }
+
+          setCurrentSheet(sheetData);
+
           // Default expand first two phases
-          if (res.data.phases?.[0]) {
+          if (sheetData.phases?.[0]) {
             setExpandedPhases({
-              [res.data.phases[0].phaseId]: true,
-              [res.data.phases[1]?.phaseId || 2]: true,
+              [sheetData.phases[0].phaseId]: true,
+              [sheetData.phases[1]?.phaseId || 2]: true,
             });
           }
         }
@@ -152,36 +260,9 @@ const Sheets = () => {
     setExpandedPhases({});
   };
 
-  const [importing, setImporting] = useState(false);
-
-  const handleImportAll = async () => {
-    if (!isAuthenticated) {
-      showToast(
-        "Please sign in to sync questions to your MongoDB account",
-        "error",
-      );
-      return;
-    }
-    setImporting(true);
-    try {
-      const res = await sheetApi.importAll();
-      showToast(
-        res.message || "All questions successfully synced to your database!",
-      );
-      const updated = await sheetApi.getSheetById(selectedSheetId);
-      if (updated?.data) setCurrentSheet(updated.data);
-    } catch (err) {
-      showToast(
-        err.response?.data?.message || "Failed to sync questions",
-        "error",
-      );
-    } finally {
-      setImporting(false);
-    }
-  };
-
   const handleToggleSolved = async (problem, topicName) => {
     const nextStatus = problem.status === "solved" ? "todo" : "solved";
+    setAutoSaveStatus("saving");
 
     // Optimistically update current sheet state
     setCurrentSheet((prev) => {
@@ -251,6 +332,30 @@ const Sheets = () => {
       };
     });
 
+    // Optimistically update summary card counts for the active sheet
+    setSheetsList((prev) =>
+      prev.map((s) => {
+        if (
+          s.id === selectedSheetId ||
+          s.platform === (currentSheet?.platform || selectedSheetId)
+        ) {
+          const newSolved = Math.max(
+            0,
+            (s.solvedCount || 0) + (nextStatus === "solved" ? 1 : -1),
+          );
+          return {
+            ...s,
+            solvedCount: newSolved,
+            progressPercentage:
+              s.totalProblems > 0
+                ? Math.round((newSolved / s.totalProblems) * 100)
+                : 0,
+          };
+        }
+        return s;
+      }),
+    );
+
     if (isAuthenticated) {
       try {
         await sheetApi.trackProblem({
@@ -261,21 +366,34 @@ const Sheets = () => {
           problemUrl: problem.url || "",
           status: nextStatus,
         });
+
+        setAutoSaveStatus("saved");
+        setTimeout(() => setAutoSaveStatus("idle"), 2500);
+
         showToast(
           nextStatus === "solved"
-            ? `Marked "${problem.title}" as Solved!`
-            : `Marked "${problem.title}" as Todo`,
+            ? `Auto-saved to Database: Marked "${problem.title}" as Solved!`
+            : `Auto-saved to Database: Marked "${problem.title}" as Todo`,
         );
       } catch (err) {
+        setAutoSaveStatus("idle");
         showToast(
-          err.response?.data?.message || "Failed to update status",
+          err.response?.data?.message || "Failed to update status in database",
           "error",
         );
       }
     } else {
+      saveGuestProblem(
+        currentSheet?.platform || selectedSheetId || "leetcode",
+        problem.title,
+        nextStatus,
+      );
+      setAutoSaveStatus("saved");
+      setTimeout(() => setAutoSaveStatus("idle"), 2500);
+
       showToast(
         nextStatus === "solved"
-          ? `Marked "${problem.title}" as Solved (Sign in to sync with cloud)`
+          ? `Marked "${problem.title}" as Solved (Saved locally. Sign in to sync across devices)`
           : `Marked "${problem.title}" as Todo`,
       );
     }
@@ -518,16 +636,20 @@ const Sheets = () => {
               <ChevronsUp size={15} />
               <span>Collapse All</span>
             </button>
-            <button
-              type="button"
-              className="sheet-sync-btn"
-              onClick={handleImportAll}
-              disabled={importing}
-              title="Add all questions from all sheets to your personal database"
+            <div
+              className={`sheet-autosync-pill ${autoSaveStatus}`}
+              title="Every question you tick is automatically saved to your MongoDB database in real time. No manual sync needed!"
             >
-              <Database size={15} />
-              <span>{importing ? "Importing..." : "Sync All to DB"}</span>
-            </button>
+              <span className={`sheet-autosync-dot ${autoSaveStatus}`} />
+              <Database size={14} />
+              <span>
+                {autoSaveStatus === "saving"
+                  ? "Saving to DB..."
+                  : autoSaveStatus === "saved"
+                    ? "Saved to DB ✓"
+                    : "Auto-Saved to DB"}
+              </span>
+            </div>
           </div>
         </div>
       </section>

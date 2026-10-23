@@ -84,12 +84,18 @@ const getSheetById = async (req, res, next) => {
 
     const user = await getOptionalUser(req);
 
+    const cleanPlatform = sheet.platform.toLowerCase().trim();
+    const platformFilter =
+      cleanPlatform === "gfg"
+        ? { $in: ["gfg", "geeksforgeeks"] }
+        : new RegExp(`^${cleanPlatform}$`, "i");
+
     // Build user solved lookup by title lowercase
     const userStatusMap = new Map();
     if (user) {
       const userProblems = await Problem.find({
         user: user._id,
-        platform: sheet.platform,
+        platform: platformFilter,
       }).select("title status _id problemUrl");
 
       for (const p of userProblems) {
@@ -183,17 +189,29 @@ const trackSheetProblem = async (req, res, next) => {
     }
 
     const nextStatus = status ? status.toLowerCase() : "solved";
+    const cleanPlatform = platform ? platform.toLowerCase().trim() : "leetcode";
+
+    let cleanDifficulty = difficulty || "Medium";
+    if (typeof cleanDifficulty === "string" && cleanDifficulty.startsWith("★")) {
+      const ratingNum = parseInt(cleanDifficulty.replace("★", "").trim(), 10);
+      if (!isNaN(ratingNum)) {
+        if (ratingNum < 1200) cleanDifficulty = "Easy";
+        else if (ratingNum < 1800) cleanDifficulty = "Medium";
+        else cleanDifficulty = "Hard";
+      }
+    }
 
     const problem = await Problem.findOneAndUpdate(
       {
         user: req.user._id,
         title: title.trim(),
+        platform: cleanPlatform,
       },
       {
         user: req.user._id,
         title: title.trim(),
-        platform: platform ? platform.toLowerCase() : "leetcode",
-        difficulty: difficulty || "Medium",
+        platform: cleanPlatform,
+        difficulty: cleanDifficulty,
         topics: topic ? [topic] : [],
         problemUrl: problemUrl || "",
         status: nextStatus,
