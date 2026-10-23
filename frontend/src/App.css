@@ -3239,7 +3239,12 @@
   }
 
   .navbar-search-input {
-    font-size: 13px;
+    font-size: 13px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
   }
 
   .navbar-kbd {
@@ -3637,10 +3642,6 @@
   .top-navbar {
     padding: 0 8px;
     gap: 8px;
-  }
-
-  .navbar-search-input::placeholder {
-    content: "Search...";
   }
 
   .main-content {

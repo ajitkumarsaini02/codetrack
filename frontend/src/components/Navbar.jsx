@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sun, Moon, Bell, ChevronDown, Search, Menu } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
@@ -7,6 +7,17 @@ const Navbar = ({ onToggleSidebar }) => {
   const { user, isAuthenticated } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [searchVal, setSearchVal] = useState("");
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 768 : false,
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "U");
 
@@ -31,7 +42,7 @@ const Navbar = ({ onToggleSidebar }) => {
         <input
           className="navbar-search-input"
           type="text"
-          placeholder="Search problems, topics, or sheets..."
+          placeholder={isMobile ? "Search..." : "Search problems, topics, or sheets..."}
           value={searchVal}
           onChange={(e) => setSearchVal(e.target.value)}
         />
