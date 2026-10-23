@@ -60,6 +60,14 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Automatically rewrite requests missing '/api' prefix (e.g. /auth/login -> /api/auth/login)
+app.use((req, res, next) => {
+  if (!req.url.startsWith("/api") && req.path !== "/") {
+    req.url = `/api${req.url}`;
+  }
+  next();
+});
+
 // API routes
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/dashboard", require("./routes/dashboard.routes"));
