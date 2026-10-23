@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Button from "../components/Button";
 import { useAuth } from "../hooks/useAuth";
@@ -7,6 +8,7 @@ import { profileApi, settingsApi } from "../services/api";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 
 const SettingsForm = ({ user, isAuthenticated, onSaved }) => {
+  const navigate = useNavigate();
   const { updateUser } = useAuth();
   const { theme: appTheme, setTheme: setAppTheme } = useTheme();
   const [name, setName] = useState(user?.name || "");
@@ -48,9 +50,13 @@ const SettingsForm = ({ user, isAuthenticated, onSaved }) => {
         }
 
         onSaved({
-          text: "Settings saved successfully to server.",
+          text: "Settings saved successfully! Redirecting to Dashboard...",
           type: "success",
         });
+
+        setTimeout(() => {
+          navigate("/");
+        }, 500);
       } catch (err) {
         onSaved({
           text:
@@ -69,8 +75,14 @@ const SettingsForm = ({ user, isAuthenticated, onSaved }) => {
           github: github.trim(),
         });
       }
-      onSaved({ text: "Settings saved for this session.", type: "success" });
+      onSaved({
+        text: "Settings saved for this session! Redirecting to Dashboard...",
+        type: "success",
+      });
       setLoading(false);
+      setTimeout(() => {
+        navigate("/");
+      }, 500);
     }
   };
 
