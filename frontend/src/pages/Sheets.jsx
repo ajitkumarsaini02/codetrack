@@ -193,6 +193,27 @@ const Sheets = () => {
                     )
                   : 0,
             };
+
+            setSheetsList((prev) =>
+              prev.map((s) => {
+                if (
+                  s.id === selectedSheetId ||
+                  s.platform === (sheetData.platform || selectedSheetId)
+                ) {
+                  return {
+                    ...s,
+                    solvedCount: totalGuestSolved,
+                    progressPercentage:
+                      sheetData.totalProblems > 0
+                        ? Math.round(
+                            (totalGuestSolved / sheetData.totalProblems) * 100,
+                          )
+                        : 0,
+                  };
+                }
+                return s;
+              }),
+            );
           } else {
             // If logged in, sync any stored guest progress to cloud
             const guestMap = getGuestSolvedMap();
@@ -261,7 +282,6 @@ const Sheets = () => {
 
   const handleToggleSolved = async (problem, topicName) => {
     const nextStatus = problem.status === "solved" ? "todo" : "solved";
-    setAutoSaveStatus("saving");
 
     // Optimistically update current sheet state
     setCurrentSheet((prev) => {
@@ -804,11 +824,23 @@ const Sheets = () => {
                                       </span>
                                     ) : null}
 
-                                    <span
+                                    <button
+                                      type="button"
                                       className={`sheet-status-pill ${isSolved ? "solved" : "todo"}`}
+                                      onClick={() =>
+                                        handleToggleSolved(
+                                          problem,
+                                          topic.topicName,
+                                        )
+                                      }
+                                      title={
+                                        isSolved
+                                          ? "Click to mark as Unsolved"
+                                          : "Click to mark as Solved"
+                                      }
                                     >
                                       {isSolved ? "Solved" : "Todo"}
-                                    </span>
+                                    </button>
                                   </div>
                                 </div>
                               );

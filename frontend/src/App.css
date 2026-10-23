@@ -2406,14 +2406,31 @@
 .sheet-status-pill {
   font-size: 11px;
   font-weight: 600;
-  padding: 2px 8px;
+  padding: 3px 9px;
   border-radius: 6px;
   border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: inherit;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.sheet-status-pill:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+}
+
+.sheet-status-pill:active {
+  transform: translateY(0);
 }
 
 .sheet-status-pill.solved {
   background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.35);
   color: #4ADE80;
 }
 
@@ -2421,6 +2438,11 @@
   background: #1E293B;
   color: #94A3B8;
   border-color: #334155;
+}
+
+.sheet-status-pill.todo:hover {
+  border-color: #4ADE80;
+  color: #4ADE80;
 }
 
 /* ==========================================================
