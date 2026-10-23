@@ -625,6 +625,20 @@ const Sheets = () => {
                                 problem.difficulty || "Easy"
                               ).toLowerCase();
 
+                              // Detect if rating and difficulty are redundant (e.g. Codeforces where rating is 800 and difficulty is "★ 800")
+                              const ratingVal =
+                                problem.rating ||
+                                (typeof problem.difficulty === "string" &&
+                                problem.difficulty.startsWith("★")
+                                  ? problem.difficulty.replace("★", "").trim()
+                                  : null);
+
+                              const isRatingDuplicate =
+                                Boolean(ratingVal) &&
+                                typeof problem.difficulty === "string" &&
+                                (problem.difficulty.includes("★") ||
+                                  problem.difficulty.trim() === String(ratingVal));
+
                               return (
                                 <div
                                   key={problem.title}
@@ -675,17 +689,19 @@ const Sheets = () => {
                                   </div>
 
                                   <div className="sheet-problem-badges">
-                                    {problem.rating ? (
+                                    {ratingVal ? (
                                       <span className="codeforces-rating-badge">
-                                        ★ {problem.rating}
+                                        ★ {ratingVal}
                                       </span>
                                     ) : null}
 
-                                    <span
-                                      className={`difficulty-badge ${diffClass}`}
-                                    >
-                                      {problem.difficulty}
-                                    </span>
+                                    {problem.difficulty && !isRatingDuplicate ? (
+                                      <span
+                                        className={`difficulty-badge ${diffClass}`}
+                                      >
+                                        {problem.difficulty}
+                                      </span>
+                                    ) : null}
 
                                     <span
                                       className={`sheet-status-pill ${isSolved ? "solved" : "todo"}`}
