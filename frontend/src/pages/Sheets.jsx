@@ -652,24 +652,23 @@ const Sheets = () => {
                                     )}
                                   </button>
 
-                                  <span className="sheet-problem-id">
-                                    {String(problem.id).startsWith("#") ||
-                                    String(problem.id).startsWith("CF") ||
-                                    String(problem.id).startsWith("gfg")
-                                      ? problem.id
-                                      : `#${problem.id}`}
-                                  </span>
-
                                   <div className="sheet-problem-title-cell">
+                                    <span className="sheet-problem-id">
+                                      {String(problem.id).startsWith("#") ||
+                                      String(problem.id).startsWith("CF") ||
+                                      String(problem.id).startsWith("gfg")
+                                        ? problem.id
+                                        : `#${problem.id}`}
+                                    </span>
                                     <a
                                       href={problem.url}
                                       target="_blank"
                                       rel="noreferrer"
                                       className="sheet-problem-link"
                                     >
-                                      {problem.title}
+                                      <span>{problem.title}</span>
                                       <ExternalLink
-                                        size={13}
+                                        size={12}
                                         className="ext-icon"
                                       />
                                     </a>
