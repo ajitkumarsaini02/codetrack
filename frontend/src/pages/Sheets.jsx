@@ -98,7 +98,6 @@ const Sheets = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [expandedPhases, setExpandedPhases] = useState({ 1: true, 2: true });
   const [toastMessage, setToastMessage] = useState({ text: "", type: "" });
-  const [autoSaveStatus, setAutoSaveStatus] = useState("idle"); // 'idle' | 'saving' | 'saved'
 
   const showToast = (text, type = "success") => {
     setToastMessage({ text, type });
@@ -367,16 +366,12 @@ const Sheets = () => {
           status: nextStatus,
         });
 
-        setAutoSaveStatus("saved");
-        setTimeout(() => setAutoSaveStatus("idle"), 2500);
-
         showToast(
           nextStatus === "solved"
-            ? `Auto-saved to Database: Marked "${problem.title}" as Solved!`
-            : `Auto-saved to Database: Marked "${problem.title}" as Todo`,
+            ? `Marked "${problem.title}" as Solved!`
+            : `Marked "${problem.title}" as Todo`,
         );
       } catch (err) {
-        setAutoSaveStatus("idle");
         showToast(
           err.response?.data?.message || "Failed to update status in database",
           "error",
@@ -388,8 +383,6 @@ const Sheets = () => {
         problem.title,
         nextStatus,
       );
-      setAutoSaveStatus("saved");
-      setTimeout(() => setAutoSaveStatus("idle"), 2500);
 
       showToast(
         nextStatus === "solved"
@@ -636,20 +629,6 @@ const Sheets = () => {
               <ChevronsUp size={15} />
               <span>Collapse All</span>
             </button>
-            <div
-              className={`sheet-autosync-pill ${autoSaveStatus}`}
-              title="Every question you tick is automatically saved to your MongoDB database in real time. No manual sync needed!"
-            >
-              <span className={`sheet-autosync-dot ${autoSaveStatus}`} />
-              <Database size={14} />
-              <span>
-                {autoSaveStatus === "saving"
-                  ? "Saving to DB..."
-                  : autoSaveStatus === "saved"
-                    ? "Saved to DB ✓"
-                    : "Auto-Saved to DB"}
-              </span>
-            </div>
           </div>
         </div>
       </section>
