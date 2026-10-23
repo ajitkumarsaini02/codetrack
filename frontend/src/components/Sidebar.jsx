@@ -9,10 +9,11 @@ import {
   LogIn,
   LogOut,
   UserPlus,
+  X,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 
-const Sidebar = ({ collapsed = false }) => {
+const Sidebar = ({ collapsed = false, mobileOpen = false, onCloseMobile }) => {
   const { user, isAuthenticated, logout } = useAuth();
 
   const navItems = [
@@ -26,11 +27,39 @@ const Sidebar = ({ collapsed = false }) => {
 
   const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "U");
 
+  const handleLinkClick = () => {
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
   return (
-    <aside className={`sidebar${collapsed ? " sidebar--collapsed" : ""}`}>
+    <aside
+      className={`sidebar${collapsed ? " sidebar--collapsed" : ""}${
+        mobileOpen ? " sidebar--mobile-open" : ""
+      }`}
+    >
       <div className="sidebar-logo">
-        <img src="/logo-icon.png" alt="CodeTrack" />
-        {!collapsed && <h2>CodeTrack</h2>}
+        <div className="sidebar-brand-group">
+          <img src="/logo-icon.png" alt="CodeTrack" />
+          {(!collapsed || mobileOpen) && <h2>CodeTrack</h2>}
+        </div>
+        <button
+          type="button"
+          className="sidebar-close-btn"
+          onClick={onCloseMobile}
+          aria-label="Close menu"
+          title="Close navigation"
+        >
+          <X size={20} />
+        </button>
       </div>
 
       <nav className="sidebar-nav">
@@ -44,10 +73,11 @@ const Sidebar = ({ collapsed = false }) => {
               className={({ isActive }) =>
                 `sidebar-link${isActive ? " active" : ""}`
               }
-              title={collapsed ? item.name : undefined}
+              title={collapsed && !mobileOpen ? item.name : undefined}
+              onClick={handleLinkClick}
             >
               <Icon size={20} />
-              {!collapsed && <span>{item.name}</span>}
+              {(!collapsed || mobileOpen) && <span>{item.name}</span>}
             </NavLink>
           );
         })}
@@ -56,7 +86,7 @@ const Sidebar = ({ collapsed = false }) => {
       <div className="sidebar-user">
         {isAuthenticated && user ? (
           <>
-            {!collapsed && (
+            {(!collapsed || mobileOpen) && (
               <div className="sidebar-user-info">
                 <div className="sidebar-avatar">
                   {getInitial(user.name || user.username)}
@@ -73,22 +103,31 @@ const Sidebar = ({ collapsed = false }) => {
               <button
                 type="button"
                 className="sidebar-btn logout"
-                onClick={logout}
+                onClick={handleLogout}
                 title="Log out of CodeTrack"
               >
                 <LogOut size={14} />
-                {!collapsed && " Log Out"}
+                {(!collapsed || mobileOpen) && " Log Out"}
               </button>
             </div>
           </>
         ) : (
           <div className="sidebar-auth-actions">
-            <Link to="/login" className="sidebar-btn" title="Sign In">
+            <Link
+              to="/login"
+              className="sidebar-btn"
+              title="Sign In"
+              onClick={handleLinkClick}
+            >
               <LogIn size={14} />
-              {!collapsed && " Sign In"}
+              {(!collapsed || mobileOpen) && " Sign In"}
             </Link>
-            {!collapsed && (
-              <Link to="/register" className="sidebar-btn">
+            {(!collapsed || mobileOpen) && (
+              <Link
+                to="/register"
+                className="sidebar-btn"
+                onClick={handleLinkClick}
+              >
                 <UserPlus size={14} /> Register
               </Link>
             )}
@@ -96,7 +135,7 @@ const Sidebar = ({ collapsed = false }) => {
         )}
       </div>
 
-      {!collapsed && (
+      {(!collapsed || mobileOpen) && (
         <div className="sidebar-footer">
           <span className="sidebar-footer-badge">CodeTrack</span>
           <span className="sidebar-footer-sub">DSA Tracker</span>
