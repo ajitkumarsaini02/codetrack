@@ -41,7 +41,7 @@ git push -u origin main
    | `NODE_ENV` | `production` |
    | `MONGODB_URI` | Your MongoDB Atlas connection string: `mongodb+srv://<user>:<password>@cluster0.mongodb.net/codetrack?retryWrites=true&w=majority` |
    | `JWT_SECRET` | Any strong random string (e.g. `c0d3tr4ck_s3cur3_jwt_k3y_9876`) |
-   | `JWT_EXPIRES_IN` | `7d` |
+   | `JWT_EXPIRES_IN` | `30d` *(or `365d` for 1 year)* |
    | `CLIENT_URL` | Your Vercel frontend URL (e.g. `https://codetrack.vercel.app`) |
 
 5. Click **Create Web Service**.
