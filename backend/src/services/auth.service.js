@@ -8,9 +8,12 @@ const createToken = (userId) => {
     throw new Error("JWT_SECRET is not configured");
   }
 
-  return jwt.sign({ id: userId }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN || "30d",
-  });
+  const signOptions = {};
+  if (env.JWT_EXPIRES_IN && env.JWT_EXPIRES_IN !== "never") {
+    signOptions.expiresIn = env.JWT_EXPIRES_IN;
+  }
+
+  return jwt.sign({ id: userId }, env.JWT_SECRET, signOptions);
 };
 
 const register = async ({ name, username, email, password }) => {

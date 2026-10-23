@@ -8,7 +8,7 @@ const env = {
   MONGODB_URI: process.env.MONGODB_URI,
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
   JWT_SECRET: process.env.JWT_SECRET,
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "30d",
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "never",
 };
 
 if (!env.MONGODB_URI) {
