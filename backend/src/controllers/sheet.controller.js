@@ -192,7 +192,10 @@ const trackSheetProblem = async (req, res, next) => {
     const cleanPlatform = platform ? platform.toLowerCase().trim() : "leetcode";
 
     let cleanDifficulty = difficulty || "Medium";
-    if (typeof cleanDifficulty === "string" && cleanDifficulty.startsWith("★")) {
+    if (
+      typeof cleanDifficulty === "string" &&
+      cleanDifficulty.startsWith("★")
+    ) {
       const ratingNum = parseInt(cleanDifficulty.replace("★", "").trim(), 10);
       if (!isNaN(ratingNum)) {
         if (ratingNum < 1200) cleanDifficulty = "Easy";
@@ -226,7 +229,11 @@ const trackSheetProblem = async (req, res, next) => {
         { user: req.user._id, date: todayStr },
         {
           $inc: { problemsSolved: 1 },
-          $setOnInsert: { user: req.user._id, date: todayStr, minutesSpent: 15 },
+          $setOnInsert: {
+            user: req.user._id,
+            date: todayStr,
+            minutesSpent: 15,
+          },
         },
         { upsert: true, new: true },
       );
@@ -250,9 +257,11 @@ const trackSheetProblem = async (req, res, next) => {
 const importAllSheetProblems = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const existing = await Problem.find({ user: userId }).select("title platform");
+    const existing = await Problem.find({ user: userId }).select(
+      "title platform",
+    );
     const existingSet = new Set(
-      existing.map((e) => `${e.platform}:${e.title.toLowerCase().trim()}`)
+      existing.map((e) => `${e.platform}:${e.title.toLowerCase().trim()}`),
     );
 
     const toInsert = [];
@@ -260,23 +269,23 @@ const importAllSheetProblems = async (req, res, next) => {
       for (const phase of sheet.phases) {
         for (const topic of phase.topics) {
           for (const prob of topic.problems) {
-              const key = `${sheet.platform}:${prob.title.toLowerCase().trim()}`;
-              if (!existingSet.has(key)) {
-                existingSet.add(key);
-                toInsert.push({
-                  user: userId,
-                  title: prob.title.trim(),
-                  platform: sheet.platform,
-                  problemUrl: prob.url || "",
-                  difficulty: prob.difficulty || "Easy",
-                  status: "todo",
-                  topics: [topic.topicName || topic.title || "General"],
-                });
-              }
+            const key = `${sheet.platform}:${prob.title.toLowerCase().trim()}`;
+            if (!existingSet.has(key)) {
+              existingSet.add(key);
+              toInsert.push({
+                user: userId,
+                title: prob.title.trim(),
+                platform: sheet.platform,
+                problemUrl: prob.url || "",
+                difficulty: prob.difficulty || "Easy",
+                status: "todo",
+                topics: [topic.topicName || topic.title || "General"],
+              });
             }
           }
         }
       }
+    }
 
     let insertedCount = 0;
     if (toInsert.length > 0) {

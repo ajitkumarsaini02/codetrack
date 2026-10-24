@@ -54,7 +54,11 @@ const createProblem = async (req, res, next) => {
         { user: req.user._id, date: todayStr },
         {
           $inc: { problemsSolved: 1 },
-          $setOnInsert: { user: req.user._id, date: todayStr, minutesSpent: 15 },
+          $setOnInsert: {
+            user: req.user._id,
+            date: todayStr,
+            minutesSpent: 15,
+          },
         },
         { upsert: true, new: true },
       );
@@ -113,11 +117,19 @@ const updateProblem = async (req, res, next) => {
         { user: req.user._id, date: todayStr },
         {
           $inc: { problemsSolved: 1 },
-          $setOnInsert: { user: req.user._id, date: todayStr, minutesSpent: 15 },
+          $setOnInsert: {
+            user: req.user._id,
+            date: todayStr,
+            minutesSpent: 15,
+          },
         },
         { upsert: true, new: true },
       );
-    } else if (updates.status && updates.status !== "solved" && existing.status === "solved") {
+    } else if (
+      updates.status &&
+      updates.status !== "solved" &&
+      existing.status === "solved"
+    ) {
       updates.solvedAt = null;
       const todayStr = new Date().toISOString().split("T")[0];
       await DailyProgress.findOneAndUpdate(

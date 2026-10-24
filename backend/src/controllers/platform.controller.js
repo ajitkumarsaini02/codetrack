@@ -1,4 +1,7 @@
-const { syncUserPlatforms, syncSinglePlatform } = require("../services/sync.service");
+const {
+  syncUserPlatforms,
+  syncSinglePlatform,
+} = require("../services/sync.service");
 const CodingProfile = require("../models/CodingProfile");
 const CodingStats = require("../models/CodingStats");
 
@@ -43,13 +46,7 @@ const addPlatform = async (req, res, next) => {
     }
 
     const normalizedPlatform = platform.toLowerCase().trim();
-    const allowed = [
-      "leetcode",
-      "codechef",
-      "codeforces",
-      "gfg",
-      "github",
-    ];
+    const allowed = ["leetcode", "codechef", "codeforces", "gfg", "github"];
 
     if (!allowed.includes(normalizedPlatform)) {
       return res.status(400).json({
