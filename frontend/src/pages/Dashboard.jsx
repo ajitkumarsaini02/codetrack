@@ -97,6 +97,8 @@ const Dashboard = () => {
     };
   }, [isAuthenticated]);
 
+  const [syncingPlatform, setSyncingPlatform] = useState("");
+
   const handleSync = async () => {
     setSyncing(true);
     setSyncMessage("");
@@ -112,6 +114,27 @@ const Dashboard = () => {
       setTimeout(() => setSyncMessage(""), 4000);
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const handleSyncPlatform = async (platformName) => {
+    if (!platformName || syncingPlatform) return;
+    setSyncingPlatform(platformName);
+    const displayName = platformDisplayNames[platformName] || platformName;
+    setSyncMessage(`Syncing ${displayName}...`);
+    try {
+      const res = await platformApi.syncPlatform(platformName);
+      setSyncMessage(res.message || `${displayName} synchronized!`);
+      await reloadDashboard();
+      setTimeout(() => setSyncMessage(""), 4000);
+    } catch (err) {
+      setSyncMessage(
+        err.response?.data?.message || err.message || `Failed to sync ${displayName}`,
+      );
+      await reloadDashboard();
+      setTimeout(() => setSyncMessage(""), 5000);
+    } finally {
+      setSyncingPlatform("");
     }
   };
 
@@ -261,6 +284,8 @@ const Dashboard = () => {
       color: platformColors[p.platform] || "#7C5CFC",
       profileUrl: p.profileUrl,
       onDelete: handleDeletePlatform,
+      isSyncing: syncingPlatform === p.platform,
+      onSync: () => handleSyncPlatform(p.platform),
     };
   });
 

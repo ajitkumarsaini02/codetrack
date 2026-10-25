@@ -19,6 +19,11 @@ const fetchGitHubStats = async (username) => {
     "User-Agent": "CodeTrack/2.0",
   };
 
+  const githubToken = process.env.GITHUB_TOKEN?.trim();
+  if (githubToken) {
+    headers.Authorization = `Bearer ${githubToken}`;
+  }
+
   const userResponse = await fetch(
     `https://api.github.com/users/${encodeURIComponent(cleanUser)}`,
     {
@@ -31,6 +36,42 @@ const fetchGitHubStats = async (username) => {
     if (userResponse.status === 404) {
       throw new Error(`GitHub user "${cleanUser}" not found`);
     }
+
+    if (userResponse.status === 403) {
+      const remaining = userResponse.headers.get("x-ratelimit-remaining");
+      const reset = userResponse.headers.get("x-ratelimit-reset");
+      let resetMsg = "";
+      if (reset) {
+        const resetTime = new Date(Number(reset) * 1000).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        resetMsg = ` (resets around ${resetTime})`;
+      }
+
+      let errorDetail = "";
+      try {
+        const errJson = await userResponse.json();
+        if (errJson?.message) {
+          errorDetail = errJson.message;
+        }
+      } catch {
+        // ignore parse error
+      }
+
+      if (remaining === "0" || errorDetail.toLowerCase().includes("rate limit")) {
+        throw new Error(
+          `GitHub API rate limit reached${resetMsg}. Add a free GITHUB_TOKEN in backend/.env to increase limit to 5,000 req/hr.`,
+        );
+      }
+
+      throw new Error(
+        errorDetail
+          ? `GitHub API error (403): ${errorDetail}`
+          : `GitHub API request failed with status: 403`,
+      );
+    }
+
     throw new Error(
       `GitHub API request failed with status: ${userResponse.status}`,
     );

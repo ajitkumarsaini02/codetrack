@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   AlertCircle,
   GitFork,
+  RefreshCw,
 } from "lucide-react";
 
 const PlatformCard = ({
@@ -31,6 +32,8 @@ const PlatformCard = ({
   color = "#7C5CFC",
   profileUrl,
   onDelete,
+  onSync,
+  isSyncing = false,
 }) => {
   const hasDifficultyBreakdown =
     platform !== "github" &&
@@ -71,6 +74,18 @@ const PlatformCard = ({
         </div>
 
         <div className="platform-actions">
+          {onSync && (
+            <button
+              type="button"
+              className="icon-button"
+              onClick={onSync}
+              disabled={isSyncing}
+              aria-label={`Sync ${name}`}
+              title={`Sync ${name}`}
+            >
+              <RefreshCw size={15} className={isSyncing ? "spin-animation" : ""} />
+            </button>
+          )}
           {profileUrl && (
             <a
               href={profileUrl}
@@ -99,8 +114,20 @@ const PlatformCard = ({
 
       {syncStatus === "failed" && syncError && (
         <div className="platform-sync-error">
-          <AlertCircle size={13} />
-          <span>{syncError}</span>
+          <div className="platform-sync-error-content">
+            <AlertCircle size={13} style={{ flexShrink: 0 }} />
+            <span>{syncError}</span>
+          </div>
+          {onSync && (
+            <button
+              type="button"
+              className="sync-retry-btn"
+              onClick={onSync}
+              disabled={isSyncing}
+            >
+              {isSyncing ? "Retrying..." : "Retry"}
+            </button>
+          )}
         </div>
       )}
 

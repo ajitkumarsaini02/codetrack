@@ -931,13 +931,44 @@
 .platform-sync-error {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 8px;
   font-size: 11px;
   color: #fca5a5;
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.25);
   padding: 6px 10px;
   border-radius: 6px;
+}
+
+.platform-sync-error-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.sync-retry-btn {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.sync-retry-btn:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
+}
+
+.sync-retry-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .platform-metrics-grid {
