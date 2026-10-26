@@ -13,7 +13,6 @@ import {
   Trophy,
   Check,
   AlertCircle,
-  Database,
   ChevronsDown,
   ChevronsUp,
   X,
@@ -96,7 +95,8 @@ const Sheets = () => {
   const [search, setSearch] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [expandedPhases, setExpandedPhases] = useState({ 1: true, 2: true });
+  const [expandedPhases, setExpandedPhases] = useState({});
+  const [expandedTopics, setExpandedTopics] = useState({});
   const [toastMessage, setToastMessage] = useState({ text: "", type: "" });
 
   const showToast = (text, type = "success") => {
@@ -238,13 +238,9 @@ const Sheets = () => {
 
           setCurrentSheet(sheetData);
 
-          // Default expand first two phases
-          if (sheetData.phases?.[0]) {
-            setExpandedPhases({
-              [sheetData.phases[0].phaseId]: true,
-              [sheetData.phases[1]?.phaseId || 2]: true,
-            });
-          }
+          // All phases and topics start collapsed by default
+          setExpandedPhases({});
+          setExpandedTopics({});
         }
       } catch (err) {
         console.warn("Could not load sheet details:", err.message);
@@ -264,6 +260,14 @@ const Sheets = () => {
     setExpandedPhases((prev) => ({
       ...prev,
       [phaseId]: !prev[phaseId],
+    }));
+  };
+
+  const toggleTopic = (phaseId, topicId) => {
+    const key = `${phaseId}_${topicId}`;
+    setExpandedTopics((prev) => ({
+      ...prev,
+      [key]: !prev[key],
     }));
   };
 
@@ -717,135 +721,200 @@ const Sheets = () => {
                         return null;
                       }
 
+                      const topicKey = `${phase.phaseId}_${topic.topicId}`;
+                      const hasFilter = Boolean(
+                        search.trim() ||
+                          difficultyFilter !== "All" ||
+                          statusFilter !== "All",
+                      );
+                      const isTopicExpanded = hasFilter
+                        ? expandedTopics[topicKey] !== false
+                        : Boolean(expandedTopics[topicKey]);
+
+                      const topicSolved = topic.solvedCount || 0;
+                      const topicTotal =
+                        topic.totalCount || topic.problems?.length || 0;
+                      const topicPct =
+                        topic.percentage != null
+                          ? topic.percentage
+                          : topicTotal > 0
+                            ? Math.round((topicSolved / topicTotal) * 100)
+                            : 0;
+
                       return (
-                        <div key={topic.topicId} className="sheet-topic-block">
-                          <div className="topic-header">
-                            <div>
+                        <div
+                          key={topic.topicId}
+                          className={`sheet-topic-block ${isTopicExpanded ? "is-expanded" : "is-collapsed"}`}
+                        >
+                          <div
+                            className="topic-header"
+                            onClick={() =>
+                              toggleTopic(phase.phaseId, topic.topicId)
+                            }
+                            role="button"
+                            tabIndex={0}
+                            aria-expanded={isTopicExpanded}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                toggleTopic(phase.phaseId, topic.topicId);
+                              }
+                            }}
+                          >
+                            <div className="topic-title-group">
                               <h4>
                                 {topic.topicId}. {topic.topicName}
                               </h4>
-                              <span className="topic-count-tag">
-                                {topic.solvedCount || 0} /{" "}
-                                {topic.totalCount || topic.problems.length}{" "}
-                                Completed
+                            </div>
+
+                            <div className="topic-header-actions">
+                              <span className="topic-progress-pill">
+                                {topicSolved} / {topicTotal} Completed
                               </span>
-                            </div>
 
-                            <div className="topic-mini-track">
                               <div
-                                className="topic-mini-fill"
-                                style={{ width: `${topic.percentage || 0}%` }}
-                              />
+                                className="topic-mini-track"
+                                title={`${topicPct}% Completed`}
+                              >
+                                <div
+                                  className="topic-mini-fill"
+                                  style={{ width: `${topicPct}%` }}
+                                />
+                              </div>
+
+                              <button
+                                type="button"
+                                className="topic-chevron-btn"
+                                aria-label={
+                                  isTopicExpanded
+                                    ? "Collapse Topic"
+                                    : "Expand Topic"
+                                }
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleTopic(phase.phaseId, topic.topicId);
+                                }}
+                              >
+                                {isTopicExpanded ? (
+                                  <ChevronUp size={18} />
+                                ) : (
+                                  <ChevronDown size={18} />
+                                )}
+                              </button>
                             </div>
                           </div>
 
-                          <div className="sheet-problems-list">
-                            {visibleProblems.map((problem) => {
-                              const isSolved = problem.status === "solved";
-                              const diffClass = (
-                                problem.difficulty || "Easy"
-                              ).toLowerCase();
+                          {isTopicExpanded && (
+                            <div className="sheet-topic-body">
+                              <div className="sheet-problems-list">
+                                {visibleProblems.map((problem) => {
+                                  const isSolved = problem.status === "solved";
+                                  const diffClass = (
+                                    problem.difficulty || "Easy"
+                                  ).toLowerCase();
 
-                              // Detect if rating and difficulty are redundant (e.g. Codeforces where rating is 800 and difficulty is "★ 800")
-                              const ratingVal =
-                                problem.rating ||
-                                (typeof problem.difficulty === "string" &&
-                                problem.difficulty.startsWith("★")
-                                  ? problem.difficulty.replace("★", "").trim()
-                                  : null);
+                                  // Detect if rating and difficulty are redundant (e.g. Codeforces where rating is 800 and difficulty is "★ 800")
+                                  const ratingVal =
+                                    problem.rating ||
+                                    (typeof problem.difficulty === "string" &&
+                                    problem.difficulty.startsWith("★")
+                                      ? problem.difficulty.replace("★", "").trim()
+                                      : null);
 
-                              const isRatingDuplicate =
-                                Boolean(ratingVal) &&
-                                typeof problem.difficulty === "string" &&
-                                (problem.difficulty.includes("★") ||
-                                  problem.difficulty.trim() === String(ratingVal));
+                                  const isRatingDuplicate =
+                                    Boolean(ratingVal) &&
+                                    typeof problem.difficulty === "string" &&
+                                    (problem.difficulty.includes("★") ||
+                                      problem.difficulty.trim() === String(ratingVal));
 
-                              return (
-                                <div
-                                  key={problem.title}
-                                  className={`sheet-problem-row ${isSolved ? "solved-row" : ""}`}
-                                >
-                                  <button
-                                    type="button"
-                                    className={`sheet-check-btn ${isSolved ? "checked" : ""}`}
-                                    onClick={() =>
-                                      handleToggleSolved(
-                                        problem,
-                                        topic.topicName,
-                                      )
-                                    }
-                                    title={
-                                      isSolved
-                                        ? "Mark as Unsolved"
-                                        : "Mark as Solved"
-                                    }
-                                  >
-                                    {isSolved ? (
-                                      <Check size={16} strokeWidth={3} />
-                                    ) : (
-                                      <Circle size={16} />
-                                    )}
-                                  </button>
-
-                                  <div className="sheet-problem-title-cell">
-                                    <span className="sheet-problem-id">
-                                      {String(problem.id).startsWith("#") ||
-                                      String(problem.id).startsWith("CF") ||
-                                      String(problem.id).startsWith("gfg")
-                                        ? problem.id
-                                        : `#${problem.id}`}
-                                    </span>
-                                    <a
-                                      href={problem.url}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="sheet-problem-link"
+                                  return (
+                                    <div
+                                      key={problem.title}
+                                      className={`sheet-problem-row ${isSolved ? "solved-row" : ""}`}
                                     >
-                                      <span>{problem.title}</span>
-                                      <ExternalLink
-                                        size={12}
-                                        className="ext-icon"
-                                      />
-                                    </a>
-                                  </div>
-
-                                  <div className="sheet-problem-badges">
-                                    {ratingVal ? (
-                                      <span className="codeforces-rating-badge">
-                                        ★ {ratingVal}
-                                      </span>
-                                    ) : null}
-
-                                    {problem.difficulty && !isRatingDuplicate ? (
-                                      <span
-                                        className={`difficulty-badge ${diffClass}`}
+                                      <button
+                                        type="button"
+                                        className={`sheet-check-btn ${isSolved ? "checked" : ""}`}
+                                        onClick={() =>
+                                          handleToggleSolved(
+                                            problem,
+                                            topic.topicName,
+                                          )
+                                        }
+                                        title={
+                                          isSolved
+                                            ? "Mark as Unsolved"
+                                            : "Mark as Solved"
+                                        }
                                       >
-                                        {problem.difficulty}
-                                      </span>
-                                    ) : null}
+                                        {isSolved ? (
+                                          <Check size={16} strokeWidth={3} />
+                                        ) : (
+                                          <Circle size={16} />
+                                        )}
+                                      </button>
 
-                                    <button
-                                      type="button"
-                                      className={`sheet-status-pill ${isSolved ? "solved" : "todo"}`}
-                                      onClick={() =>
-                                        handleToggleSolved(
-                                          problem,
-                                          topic.topicName,
-                                        )
-                                      }
-                                      title={
-                                        isSolved
-                                          ? "Click to mark as Unsolved"
-                                          : "Click to mark as Solved"
-                                      }
-                                    >
-                                      {isSolved ? "Solved" : "Todo"}
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
+                                      <div className="sheet-problem-title-cell">
+                                        <span className="sheet-problem-id">
+                                          {String(problem.id).startsWith("#") ||
+                                          String(problem.id).startsWith("CF") ||
+                                          String(problem.id).startsWith("gfg")
+                                            ? problem.id
+                                            : `#${problem.id}`}
+                                        </span>
+                                        <a
+                                          href={problem.url}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="sheet-problem-link"
+                                        >
+                                          <span>{problem.title}</span>
+                                          <ExternalLink
+                                            size={12}
+                                            className="ext-icon"
+                                          />
+                                        </a>
+                                      </div>
+
+                                      <div className="sheet-problem-badges">
+                                        {ratingVal ? (
+                                          <span className="codeforces-rating-badge">
+                                            ★ {ratingVal}
+                                          </span>
+                                        ) : null}
+
+                                        {problem.difficulty && !isRatingDuplicate ? (
+                                          <span
+                                            className={`difficulty-badge ${diffClass}`}
+                                          >
+                                            {problem.difficulty}
+                                          </span>
+                                        ) : null}
+
+                                        <button
+                                          type="button"
+                                          className={`sheet-status-pill ${isSolved ? "solved" : "todo"}`}
+                                          onClick={() =>
+                                            handleToggleSolved(
+                                              problem,
+                                              topic.topicName,
+                                            )
+                                          }
+                                          title={
+                                            isSolved
+                                              ? "Click to mark as Unsolved"
+                                              : "Click to mark as Solved"
+                                          }
+                                        >
+                                          {isSolved ? "Solved" : "Todo"}
+                                        </button>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}

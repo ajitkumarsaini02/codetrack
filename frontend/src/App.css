@@ -2265,8 +2265,9 @@
   padding: 16px 20px 22px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   background: #171F32;
+  animation: accordionSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Topic Block */
@@ -2274,23 +2275,55 @@
   background: #12192A;
   border: 1px solid #222C40;
   border-radius: 12px;
-  padding: 16px 18px;
+  padding: 14px 18px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.sheet-topic-block:hover {
+  border-color: #2D3A58;
+}
+
+.sheet-topic-block.is-expanded {
+  border-color: #2A3650;
 }
 
 .topic-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 14px;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: background-color 0.15s;
+}
+
+.topic-header:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.sheet-topic-block.is-expanded .topic-header {
   margin-bottom: 14px;
 }
 
-.topic-header h4 {
-  margin: 0 0 4px;
-  font-size: 14px;
+.sheet-topic-block.is-collapsed .topic-header {
+  margin-bottom: 0;
+}
+
+.topic-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.topic-title-group h4 {
+  margin: 0;
+  font-size: 14.5px;
   font-weight: 600;
   color: #E2E8F0;
+  letter-spacing: -0.01em;
 }
 
 .topic-count-tag {
@@ -2299,12 +2332,31 @@
   font-weight: 500;
 }
 
+.topic-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.topic-progress-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #94A3B8;
+  background: #0D1527;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #202B42;
+  white-space: nowrap;
+}
+
 .topic-mini-track {
-  width: 100px;
+  width: 90px;
   height: 6px;
   background: #1E293B;
   border-radius: 10px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .topic-mini-fill {
@@ -2312,6 +2364,44 @@
   background: #22C55E;
   border-radius: 10px;
   transition: width 0.3s ease;
+}
+
+.topic-chevron-btn {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.topic-header:hover .topic-chevron-btn {
+  color: #F8FAFC;
+}
+
+.topic-chevron-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+/* Accordion slide-down animation */
+@keyframes accordionSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sheet-topic-body {
+  animation: accordionSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Problem Row */
@@ -2944,8 +3034,23 @@
   border-color: #E2E8F0;
 }
 
+[data-theme="light"] .sheet-topic-block:hover {
+  border-color: #CBD5E1;
+}
+
+[data-theme="light"] .topic-header:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .topic-title-group h4,
 [data-theme="light"] .topic-header h4 {
   color: #0F172A;
+}
+
+[data-theme="light"] .topic-progress-pill {
+  color: #475569;
+  background: #FFFFFF;
+  border-color: #E2E8F0;
 }
 
 [data-theme="light"] .topic-count-tag {
@@ -2954,6 +3059,19 @@
 
 [data-theme="light"] .topic-mini-track {
   background: #E2E8F0;
+}
+
+[data-theme="light"] .topic-chevron-btn {
+  color: #64748B;
+}
+
+[data-theme="light"] .topic-header:hover .topic-chevron-btn {
+  color: #0F172A;
+}
+
+[data-theme="light"] .topic-chevron-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0F172A;
 }
 
 [data-theme="light"] .sheet-problem-row {
@@ -3850,13 +3968,24 @@
   }
 
   .topic-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
     gap: 8px;
+    padding: 2px 0;
+  }
+
+  .topic-title-group {
+    width: 100%;
+  }
+
+  .topic-header-actions {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
   }
 
   .topic-mini-track {
-    width: 100%;
+    flex: 1;
+    min-width: 70px;
   }
 
   /* Profile Card */
