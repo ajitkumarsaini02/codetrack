@@ -1,8 +1,6 @@
 // CodeTrack Curated Topic-Wise DSA Sheets
-// Auto-generated from user-provided master sheets:
-// 1. LeetCode DSA Complete Roadmap (1,000 Unique Problems, 23 Phases, 105 Topics)
+// 1. LeetCode DSA Mastery Sheet (947 Unique Curated Problems, 22 Phases, 115 Topics)
 // 2. Codeforces DSA Mastery Sheet (500 Curated Problems, 22 Phases, 116 Topics)
-// 3. LeetCode 1,160 10-per-Topic Mastery (1,160 Problems, 22 Phases, 116 Topics)
 
 const sheets = require("./sheetsData.json");
 

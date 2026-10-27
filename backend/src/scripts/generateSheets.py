@@ -258,15 +258,16 @@ def build_sheets():
     lc_total = sum(len(t["problems"]) for p in lc_merged_phases for t in p["topics"])
     cf_total = sum(len(t["problems"]) for p in cf_phases for t in p["topics"])
 
+    lc_topics_count = sum(len(p["topics"]) for p in lc_merged_phases)
     sheets = [
         {
             "id": "leetcode",
             "name": "LeetCode DSA Mastery Sheet",
-            "tagline": f"{lc_total} Curated Problems • 22 Phases • 116 Topics",
+            "tagline": f"{lc_total} Curated Problems • {len(lc_merged_phases)} Phases • {lc_topics_count} Topics",
             "platform": "leetcode",
             "iconColor": "#FFA116",
             "accentColor": "#F59E0B",
-            "description": "Complete curated roadmap covering all 116 sequential DSA topics, with exactly 10 questions baseline per topic plus full coverage of all unique problems.",
+            "description": f"Complete curated roadmap covering all {lc_topics_count} sequential DSA topics, with exactly 10 questions baseline per topic plus full coverage of all unique problems.",
             "phases": lc_merged_phases
         },
         {

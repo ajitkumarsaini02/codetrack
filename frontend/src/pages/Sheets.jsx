@@ -22,12 +22,12 @@ const fallbackSheets = [
   {
     id: "leetcode",
     name: "LeetCode DSA Mastery Sheet",
-    tagline: "1,498 Curated Problems • 22 Phases • 116 Topics",
+    tagline: "947 Curated Problems • 22 Phases • 115 Topics",
     platform: "leetcode",
     iconColor: "#FFA116",
     description:
-      "Comprehensive DSA roadmap covering all 116 sequential topics, with 10 questions per topic baseline and all unique problems.",
-    totalProblems: 1498,
+      "Comprehensive DSA roadmap covering all 115 sequential topics, with 10 questions per topic baseline and all unique problems.",
+    totalProblems: 947,
     phaseCount: 22,
     solvedCount: 0,
     progressPercentage: 0,

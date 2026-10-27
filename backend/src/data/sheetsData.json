@@ -6,7 +6,7 @@
     "platform": "leetcode",
     "iconColor": "#FFA116",
     "accentColor": "#F59E0B",
-    "description": "Complete curated roadmap covering all 116 sequential DSA topics, with exactly 10 questions baseline per topic plus full coverage of all unique problems.",
+    "description": "Complete curated roadmap covering all 115 sequential DSA topics, with exactly 10 questions baseline per topic plus full coverage of all unique problems.",
     "phases": [
       {
         "phaseId": 1,
