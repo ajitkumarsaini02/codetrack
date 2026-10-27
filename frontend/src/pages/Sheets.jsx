@@ -45,19 +45,6 @@ const fallbackSheets = [
     solvedCount: 0,
     progressPercentage: 0,
   },
-  {
-    id: "gfg",
-    name: "GeeksforGeeks DSA Mastery Sheet",
-    tagline: "500 Interview-Ready Problems • 22 Phases",
-    platform: "gfg",
-    iconColor: "#2F8D46",
-    description:
-      "Targeted practice sheet designed specifically for technical coding rounds.",
-    totalProblems: 500,
-    phaseCount: 22,
-    solvedCount: 0,
-    progressPercentage: 0,
-  },
 ];
 
 const GUEST_STORAGE_KEY = "codetrack_guest_solved_sheet";
@@ -450,7 +437,7 @@ const Sheets = () => {
     <div className="page">
       <Header
         title="DSA Mastery Sheets"
-        subtitle="Topic-wise curated roadmaps with progress tracking across LeetCode, Codeforces & GFG."
+        subtitle="Topic-wise curated roadmaps with progress tracking across LeetCode and Codeforces."
       />
 
       {toastMessage.text && (
@@ -857,8 +844,7 @@ const Sheets = () => {
                                       <div className="sheet-problem-title-cell">
                                         <span className="sheet-problem-id">
                                           {String(problem.id).startsWith("#") ||
-                                          String(problem.id).startsWith("CF") ||
-                                          String(problem.id).startsWith("gfg")
+                                          String(problem.id).startsWith("CF")
                                             ? problem.id
                                             : `#${problem.id}`}
                                         </span>

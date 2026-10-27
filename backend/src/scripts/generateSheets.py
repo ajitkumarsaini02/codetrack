@@ -253,12 +253,10 @@ def parse_and_merge_leetcode():
 
 def build_sheets():
     cf_phases = parse_codeforces()
-    gfg_phases = parse_geeksforgeeks()
     lc_merged_phases = parse_and_merge_leetcode()
 
     lc_total = sum(len(t["problems"]) for p in lc_merged_phases for t in p["topics"])
     cf_total = sum(len(t["problems"]) for p in cf_phases for t in p["topics"])
-    gfg_total = sum(len(t["problems"]) for p in gfg_phases for t in p["topics"])
 
     sheets = [
         {
@@ -280,16 +278,6 @@ def build_sheets():
             "accentColor": "#10B981",
             "description": "Curated Codeforces problems strictly organized from ★ 800 to ★ 2600 difficulty tiers across 22 phases.",
             "phases": cf_phases
-        },
-        {
-            "id": "gfg",
-            "name": "GeeksforGeeks DSA Mastery Sheet",
-            "tagline": f"{gfg_total} Interview-Ready Problems • 22 Phases",
-            "platform": "gfg",
-            "iconColor": "#2F8D46",
-            "accentColor": "#16A34A",
-            "description": "Targeted practice sheet designed specifically for technical coding rounds at top tech companies.",
-            "phases": gfg_phases
         }
     ]
 
