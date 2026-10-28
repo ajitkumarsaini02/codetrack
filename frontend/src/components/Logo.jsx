@@ -10,13 +10,13 @@ const Logo = ({ size = 28, className = "", variant = "badge" }) => {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="ct-logo-amber" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#C59648" />
-          <stop offset="100%" stopColor="#F2CB8E" />
+        <linearGradient id="ct-logo-terracotta" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#B95F45" />
+          <stop offset="100%" stopColor="#E09275" />
         </linearGradient>
         <radialGradient id="ct-logo-glow" cx="50%" cy="30%" r="65%">
-          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
         </radialGradient>
       </defs>
 
@@ -53,24 +53,24 @@ const Logo = ({ size = 28, className = "", variant = "badge" }) => {
         strokeLinejoin="round"
       />
 
-      {/* Dynamic Ascending Track Slash '/' */}
+      {/* Dynamic Ascending Track Slash '/' in Terracotta */}
       <line
         x1="43"
         y1="68"
         x2="57"
         y2="32"
-        stroke="url(#ct-logo-amber)"
+        stroke="url(#ct-logo-terracotta)"
         strokeWidth="6.5"
         strokeLinecap="round"
       />
 
       {/* Summit Milestone Track Node */}
-      <circle cx="58" cy="27" r="4.5" fill="#F2CB8E" />
+      <circle cx="58" cy="27" r="4.5" fill="#E09275" />
       <circle
         cx="58"
         cy="27"
         r="8"
-        stroke="var(--accent)"
+        stroke="var(--terracotta)"
         strokeWidth="1.5"
         strokeOpacity="0.5"
       />
@@ -88,4 +88,3 @@ const Logo = ({ size = 28, className = "", variant = "badge" }) => {
 };
 
 export default Logo;
-

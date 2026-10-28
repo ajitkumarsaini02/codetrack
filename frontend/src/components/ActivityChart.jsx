@@ -13,13 +13,14 @@ const ActivityChart = ({ data }) => {
   const { theme } = useTheme();
   const isLight = theme === "light";
 
-  // Warm Neutral Design Tokens
-  const accentColor = isLight ? "#966B2D" : "#D6AD70";
-  const gridColor = isLight ? "#E3E0D6" : "#35342D";
-  const textColor = isLight ? "#777568" : "#A19F93";
-  const cardBg = isLight ? "#FFFFFF" : "#1E1D19";
-  const borderColor = isLight ? "#E3E0D6" : "#35342D";
-  const headingColor = isLight ? "#292821" : "#F0EFE9";
+  // Forest Green, Warm Cream & Terracotta Tokens
+  const accentColor = isLight ? "#315B40" : "#739775";
+  const terracottaColor = isLight ? "#B95F45" : "#D47E62";
+  const gridColor = isLight ? "#DED5C4" : "#354638";
+  const textColor = isLight ? "#626C5F" : "#B5BEAE";
+  const cardBg = isLight ? "#FFFCF5" : "#1D2A20";
+  const borderColor = isLight ? "#DED5C4" : "#354638";
+  const headingColor = isLight ? "#24352A" : "#F4F0E5";
 
   const chartData =
     data && data.length > 0
@@ -105,11 +106,11 @@ const ActivityChart = ({ data }) => {
               dataKey="solved"
               name="Problems Solved"
               stroke={accentColor}
-              strokeWidth={2}
+              strokeWidth={2.2}
               fill="url(#activityGradient)"
               activeDot={{
-                r: 4.5,
-                fill: accentColor,
+                r: 5,
+                fill: terracottaColor,
                 stroke: cardBg,
                 strokeWidth: 2,
               }}

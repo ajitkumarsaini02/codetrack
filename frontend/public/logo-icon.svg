@@ -1,30 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
   <defs>
-    <linearGradient id="ct-amber-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#C59648" />
-      <stop offset="100%" stop-color="#F2CB8E" />
+    <linearGradient id="ct-terra-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#B95F45" />
+      <stop offset="100%" stop-color="#E09275" />
     </linearGradient>
-    <radialGradient id="ct-badge-glow" cx="50%" cy="30%" r="65%">
-      <stop offset="0%" stop-color="#D6AD70" stop-opacity="0.16" />
-      <stop offset="100%" stop-color="#D6AD70" stop-opacity="0" />
+    <radialGradient id="ct-forest-glow" cx="50%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#315B40" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#315B40" stop-opacity="0" />
     </radialGradient>
   </defs>
 
-  <!-- Squircle Base -->
-  <rect x="5" y="5" width="90" height="90" rx="22" fill="#171613" stroke="#35342D" stroke-width="2.5" />
-  <rect x="5" y="5" width="90" height="90" rx="22" fill="url(#ct-badge-glow)" />
+  <!-- Squircle Base in Forest Green Charcoal -->
+  <rect x="5" y="5" width="90" height="90" rx="22" fill="#151F18" stroke="#354638" stroke-width="2.5" />
+  <rect x="5" y="5" width="90" height="90" rx="22" fill="url(#ct-forest-glow)" />
 
-  <!-- Left Code Bracket '<' -->
-  <path d="M35 34 L21 50 L35 66" stroke="#F0EFE9" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Left Code Bracket '<' in Warm Cream -->
+  <path d="M35 34 L21 50 L35 66" stroke="#F4F0E5" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
 
-  <!-- Ascending Track Slash '/' -->
-  <line x1="43" y1="68" x2="57" y2="32" stroke="url(#ct-amber-grad)" stroke-width="6" stroke-linecap="round" />
+  <!-- Ascending Track Slash '/' in Terracotta -->
+  <line x1="43" y1="68" x2="57" y2="32" stroke="url(#ct-terra-grad)" stroke-width="6" stroke-linecap="round" />
 
   <!-- Track Summit Pulse Indicator -->
-  <circle cx="58" cy="27" r="4.5" fill="#F2CB8E" />
-  <circle cx="58" cy="27" r="7.5" stroke="#D6AD70" stroke-width="1.5" stroke-opacity="0.45" />
+  <circle cx="58" cy="27" r="4.5" fill="#E09275" />
+  <circle cx="58" cy="27" r="7.5" stroke="#D47E62" stroke-width="1.5" stroke-opacity="0.45" />
 
-  <!-- Right Code Bracket '>' -->
-  <path d="M65 34 L79 50 L65 66" stroke="#F0EFE9" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Right Code Bracket '>' in Warm Cream -->
+  <path d="M65 34 L79 50 L65 66" stroke="#F4F0E5" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
 </svg>
-

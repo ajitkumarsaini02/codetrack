@@ -3,7 +3,7 @@ const StatCard = ({
   value,
   subtitle,
   icon: Icon,
-  color = "#D6AD70",
+  color = "#739775",
   badge = null,
   progress = null,
   className = "",

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CodeTrack — Warm Neutral Design System
+   CodeTrack — Premium Forest Green, Warm Cream & Terracotta Design System
    ========================================================================== */
 
 :root,
@@ -10,73 +10,86 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Warm Neutral Dark Surfaces */
-  --bg-primary: #12110F;
-  --bg-sidebar: #171613;
-  --bg-navbar: #171613;
-  --bg-card: #1E1D19;
-  --bg-surface: #1E1D19;
-  --bg-surface-elevated: #24231E;
-  --bg-surface-hover: #2B2A24;
-  --bg-input: #171613;
+  /* Forest Green Dark Mode Core Tokens */
+  --background: #111812;
+  --sidebar: #151F18;
+  --navbar: #151F18;
+  --card: #1D2A20;
+  --surface-elevated: #263529;
+  --border: #354638;
 
-  /* Borders & Dividers */
-  --border: #35342D;
-  --border-muted: #282721;
-  --border-subtle: #2D2C25;
-  --border-focus: #D6AD70;
+  --text-primary: #F4F0E5;
+  --text-secondary: #B5BEAE;
+  --text-muted: #879486;
+  --text-inverse: #111812;
 
-  /* Warm Amber Accent */
-  --accent: #D6AD70;
-  --accent-hover: #E3BE89;
-  --accent-subtle: rgba(214, 173, 112, 0.12);
-  --accent-border: rgba(214, 173, 112, 0.28);
-  --accent-glow: rgba(214, 173, 112, 0.18);
-  --focus-ring: #D6AD70;
+  --primary: #315B40;
+  --primary-hover: #3E704F;
+  --accent: #739775;
+  --accent-subtle: #263D2C;
 
-  /* Typography */
-  --text-primary: #F0EFE9;
-  --text-secondary: #A19F93;
-  --text-muted: #79776D;
-  --text-inverse: #12110F;
+  --terracotta: #D47E62;
+  --terracotta-hover: #E09275;
+  --terracotta-subtle: rgba(212, 126, 98, 0.14);
+  --terracotta-border: rgba(212, 126, 98, 0.3);
+  --cream: #E9DFC8;
 
-  /* Semantic Feedback (Warm-tuned) */
   --success: #8BBF91;
-  --success-subtle: rgba(139, 191, 145, 0.12);
-  --success-border: rgba(139, 191, 145, 0.25);
+  --success-subtle: rgba(139, 191, 145, 0.14);
+  --success-border: rgba(139, 191, 145, 0.3);
 
   --warning: #E3B56C;
-  --warning-subtle: rgba(227, 181, 108, 0.12);
-  --warning-border: rgba(227, 181, 108, 0.25);
+  --warning-subtle: rgba(227, 181, 108, 0.14);
+  --warning-border: rgba(227, 181, 108, 0.3);
 
   --error: #E58A7A;
-  --error-subtle: rgba(229, 138, 122, 0.12);
-  --error-border: rgba(229, 138, 122, 0.25);
+  --error-subtle: rgba(229, 138, 122, 0.14);
+  --error-border: rgba(229, 138, 122, 0.3);
 
   --info: #60A5FA;
-  --info-subtle: rgba(96, 165, 250, 0.12);
-  --info-border: rgba(96, 165, 250, 0.25);
+  --info-subtle: rgba(96, 165, 250, 0.14);
+  --info-border: rgba(96, 165, 250, 0.3);
+
+  --focus-ring: #D6AD70;
+
+  /* Semantic Aliases for App Styles */
+  --bg-primary: var(--background);
+  --bg-sidebar: var(--sidebar);
+  --bg-navbar: var(--navbar);
+  --bg-card: var(--card);
+  --bg-surface: var(--card);
+  --bg-surface-elevated: var(--surface-elevated);
+  --bg-surface-hover: #2F4032;
+  --bg-input: var(--sidebar);
+
+  --border-muted: #273629;
+  --border-subtle: #2D3D30;
+  --border-focus: var(--accent);
+
+  --accent-hover: #86AB88;
+  --accent-border: rgba(115, 151, 117, 0.32);
+  --accent-glow: rgba(115, 151, 117, 0.18);
 
   /* Platform Identity Colors */
   --plat-leetcode: #F59E0B;
-  --plat-leetcode-subtle: rgba(245, 158, 11, 0.12);
-  --plat-leetcode-border: rgba(245, 158, 11, 0.25);
+  --plat-leetcode-subtle: rgba(245, 158, 11, 0.14);
+  --plat-leetcode-border: rgba(245, 158, 11, 0.28);
 
   --plat-codeforces: #60A5FA;
-  --plat-codeforces-subtle: rgba(96, 165, 250, 0.12);
-  --plat-codeforces-border: rgba(96, 165, 250, 0.25);
+  --plat-codeforces-subtle: rgba(96, 165, 250, 0.14);
+  --plat-codeforces-border: rgba(96, 165, 250, 0.28);
 
   --plat-codechef: #8B5CF6;
-  --plat-codechef-subtle: rgba(139, 92, 246, 0.12);
-  --plat-codechef-border: rgba(139, 92, 246, 0.25);
+  --plat-codechef-subtle: rgba(139, 92, 246, 0.14);
+  --plat-codechef-border: rgba(139, 92, 246, 0.28);
 
   --plat-gfg: #22A06B;
-  --plat-gfg-subtle: rgba(34, 160, 107, 0.12);
-  --plat-gfg-border: rgba(34, 160, 107, 0.25);
+  --plat-gfg-subtle: rgba(34, 160, 107, 0.14);
+  --plat-gfg-border: rgba(34, 160, 107, 0.28);
 
   --plat-github: #9CA3AF;
-  --plat-github-subtle: rgba(156, 163, 175, 0.12);
-  --plat-github-border: rgba(156, 163, 175, 0.25);
+  --plat-github-subtle: rgba(156, 163, 175, 0.14);
+  --plat-github-border: rgba(156, 163, 175, 0.28);
 
   /* Radii */
   --radius-xs: 4px;
@@ -86,12 +99,12 @@
   --radius-xl: 16px;
   --radius-full: 9999px;
 
-  /* SaaS Shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
-  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.38);
-  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.55);
-  --shadow-dropdown: 0 12px 32px -4px rgba(0, 0, 0, 0.65), 0 4px 12px rgba(0, 0, 0, 0.35);
+  /* Shadows (Dark) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.6);
+  --shadow-dropdown: 0 12px 32px -4px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(0, 0, 0, 0.4);
 
   /* Transitions */
   --transition-fast: 160ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -101,80 +114,93 @@
 [data-theme="light"] {
   color-scheme: light;
 
-  /* Warm Neutral Light Surfaces */
-  --bg-primary: #F6F5F0;
-  --bg-sidebar: #FFFFFF;
-  --bg-navbar: #FFFFFF;
-  --bg-card: #FFFFFF;
-  --bg-surface: #FFFFFF;
-  --bg-surface-elevated: #F0EEE7;
-  --bg-surface-hover: #E7E4DC;
-  --bg-input: #FFFFFF;
+  /* Warm Cream Light Mode Core Tokens */
+  --background: #F5F0E5;
+  --sidebar: #FBF8F0;
+  --navbar: #FFFFFF;
+  --card: #FFFCF5;
+  --surface-elevated: #EFE7D7;
+  --border: #DED5C4;
 
-  /* Borders & Dividers */
-  --border: #E3E0D6;
-  --border-muted: #EBE8E0;
-  --border-subtle: #E8E5DC;
-  --border-focus: #966B2D;
-
-  /* Warm Rich Amber Accent */
-  --accent: #966B2D;
-  --accent-hover: #7F5926;
-  --accent-subtle: rgba(150, 107, 45, 0.08);
-  --accent-border: rgba(150, 107, 45, 0.22);
-  --accent-glow: rgba(150, 107, 45, 0.12);
-  --focus-ring: #966B2D;
-
-  /* Typography */
-  --text-primary: #292821;
-  --text-secondary: #777568;
-  --text-muted: #969386;
+  --text-primary: #24352A;
+  --text-secondary: #626C5F;
+  --text-muted: #858B7F;
   --text-inverse: #FFFFFF;
 
-  /* Semantic Feedback */
+  --primary: #315B40;
+  --primary-hover: #244A32;
+  --accent: #739775;
+  --accent-subtle: #DCE8D8;
+
+  --terracotta: #B95F45;
+  --terracotta-hover: #9F4C36;
+  --terracotta-subtle: rgba(185, 95, 69, 0.12);
+  --terracotta-border: rgba(185, 95, 69, 0.28);
+  --cream: #E9DFC8;
+
   --success: #397A4A;
-  --success-subtle: rgba(57, 122, 74, 0.09);
-  --success-border: rgba(57, 122, 74, 0.22);
+  --success-subtle: rgba(57, 122, 74, 0.12);
+  --success-border: rgba(57, 122, 74, 0.25);
 
   --warning: #9A681F;
-  --warning-subtle: rgba(154, 104, 31, 0.09);
-  --warning-border: rgba(154, 104, 31, 0.22);
+  --warning-subtle: rgba(154, 104, 31, 0.12);
+  --warning-border: rgba(154, 104, 31, 0.25);
 
   --error: #B94336;
-  --error-subtle: rgba(185, 67, 54, 0.09);
-  --error-border: rgba(185, 67, 54, 0.22);
+  --error-subtle: rgba(185, 67, 54, 0.12);
+  --error-border: rgba(185, 67, 54, 0.25);
 
   --info: #2563EB;
-  --info-subtle: rgba(37, 99, 235, 0.09);
-  --info-border: rgba(37, 99, 235, 0.22);
+  --info-subtle: rgba(37, 99, 235, 0.12);
+  --info-border: rgba(37, 99, 235, 0.25);
+
+  --focus-ring: #966B2D;
+
+  /* Semantic Aliases for App Styles */
+  --bg-primary: var(--background);
+  --bg-sidebar: var(--sidebar);
+  --bg-navbar: var(--navbar);
+  --bg-card: var(--card);
+  --bg-surface: var(--card);
+  --bg-surface-elevated: var(--surface-elevated);
+  --bg-surface-hover: #E8E0CE;
+  --bg-input: #FFFFFF;
+
+  --border-muted: #E6DFD0;
+  --border-subtle: #ECE5D7;
+  --border-focus: var(--primary);
+
+  --accent-hover: #5A7E5C;
+  --accent-border: rgba(115, 151, 117, 0.35);
+  --accent-glow: rgba(115, 151, 117, 0.15);
 
   /* Platform Identity Colors (Light-tuned) */
   --plat-leetcode: #D97706;
-  --plat-leetcode-subtle: rgba(217, 119, 6, 0.09);
-  --plat-leetcode-border: rgba(217, 119, 6, 0.25);
+  --plat-leetcode-subtle: rgba(217, 119, 6, 0.12);
+  --plat-leetcode-border: rgba(217, 119, 6, 0.28);
 
   --plat-codeforces: #2563EB;
-  --plat-codeforces-subtle: rgba(37, 99, 235, 0.09);
-  --plat-codeforces-border: rgba(37, 99, 235, 0.25);
+  --plat-codeforces-subtle: rgba(37, 99, 235, 0.12);
+  --plat-codeforces-border: rgba(37, 99, 235, 0.28);
 
   --plat-codechef: #7C3AED;
-  --plat-codechef-subtle: rgba(124, 58, 237, 0.09);
-  --plat-codechef-border: rgba(124, 58, 237, 0.25);
+  --plat-codechef-subtle: rgba(124, 58, 237, 0.12);
+  --plat-codechef-border: rgba(124, 58, 237, 0.28);
 
   --plat-gfg: #15803D;
-  --plat-gfg-subtle: rgba(21, 128, 61, 0.09);
-  --plat-gfg-border: rgba(21, 128, 61, 0.25);
+  --plat-gfg-subtle: rgba(21, 128, 61, 0.12);
+  --plat-gfg-border: rgba(21, 128, 61, 0.28);
 
   --plat-github: #6B7280;
-  --plat-github-subtle: rgba(107, 114, 128, 0.09);
-  --plat-github-border: rgba(107, 114, 128, 0.25);
+  --plat-github-subtle: rgba(107, 114, 128, 0.12);
+  --plat-github-border: rgba(107, 114, 128, 0.28);
 
-  /* Shadows in Light Mode */
-  --shadow-xs: 0 1px 2px rgba(41, 40, 33, 0.04);
-  --shadow-sm: 0 1px 3px rgba(41, 40, 33, 0.06), 0 1px 2px rgba(41, 40, 33, 0.04);
-  --shadow-md: 0 4px 8px -2px rgba(41, 40, 33, 0.07), 0 2px 4px -2px rgba(41, 40, 33, 0.04);
-  --shadow-lg: 0 12px 24px -4px rgba(41, 40, 33, 0.09), 0 4px 8px -2px rgba(41, 40, 33, 0.04);
-  --shadow-dropdown: 0 12px 32px -4px rgba(41, 40, 33, 0.12), 0 4px 8px -2px rgba(41, 40, 33, 0.06);
+  /* Shadows (Light) */
+  --shadow-xs: 0 1px 2px rgba(36, 53, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(36, 53, 42, 0.06), 0 1px 2px rgba(36, 53, 42, 0.04);
+  --shadow-md: 0 4px 8px -2px rgba(36, 53, 42, 0.07), 0 2px 4px -2px rgba(36, 53, 42, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(36, 53, 42, 0.09), 0 4px 8px -2px rgba(36, 53, 42, 0.04);
+  --shadow-dropdown: 0 12px 32px -4px rgba(36, 53, 42, 0.12), 0 4px 8px -2px rgba(36, 53, 42, 0.06);
 }
 
 * {
@@ -195,7 +221,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: clip;
-  background-color: var(--bg-primary);
+  background-color: var(--background);
   color: var(--text-primary);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 13.5px;
@@ -277,8 +303,8 @@ p {
 }
 
 ::selection {
-  background: var(--accent-subtle);
-  color: var(--accent);
+  background: var(--terracotta-subtle);
+  color: var(--terracotta);
 }
 
 ::-webkit-scrollbar {

@@ -208,7 +208,7 @@ const Dashboard = () => {
         ? "Synced across linked profiles"
         : "Total problems completed",
       icon: Code2,
-      color: "#D6AD70",
+      color: "#739775",
       badge: "All Platforms",
       className: "stat-card-hero",
     },
@@ -218,7 +218,7 @@ const Dashboard = () => {
       value: highestRating > 0 ? highestRating : "—",
       subtitle: "Peak contest rating",
       icon: Trophy,
-      color: "#E3B56C",
+      color: "#D47E62",
       badge: highestRating > 0 ? "Peak" : null,
     },
     {
@@ -227,7 +227,7 @@ const Dashboard = () => {
       value: manuallySolved,
       subtitle: `${trackedProblems > 0 ? trackedProblems : 2498} curated catalog`,
       icon: Flame,
-      color: "#E58A7A",
+      color: "#E3B56C",
       progress:
         trackedProblems > 0
           ? (manuallySolved / trackedProblems) * 100
@@ -416,7 +416,7 @@ const Dashboard = () => {
               label="Hard Problems"
               value={hardCount}
               max={hardTarget}
-              color="#E58A7A"
+              color="#D47E62"
             />
           </div>
 

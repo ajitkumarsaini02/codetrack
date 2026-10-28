@@ -2,7 +2,7 @@ const ProgressBar = ({
   label = "Daily Goal",
   value = 0,
   max = 5,
-  color = "#D6AD70",
+  color = "#739775",
 }) => {
   const percentage =
     max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;

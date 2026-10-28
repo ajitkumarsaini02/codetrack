@@ -91,7 +91,7 @@ const Profile = () => {
           value={totalSolved}
           subtitle="Across practice sessions & platforms"
           icon={Code2}
-          color="#D6AD70"
+          color="#739775"
         />
 
         <StatCard
@@ -99,7 +99,7 @@ const Profile = () => {
           value={peakRating > 0 ? peakRating : "—"}
           subtitle="Peak rating"
           icon={Trophy}
-          color="#E3B56C"
+          color="#D47E62"
         />
 
         <StatCard
@@ -107,7 +107,7 @@ const Profile = () => {
           value={`${dashboard?.activity?.length ? Math.min(dashboard.activity.length, 7) : 0} Days`}
           subtitle="Consistency count"
           icon={Flame}
-          color="#E58A7A"
+          color="#E3B56C"
         />
       </section>
 
