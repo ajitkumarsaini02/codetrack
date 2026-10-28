@@ -1,123 +1,107 @@
-# CodeTrack Architecture
+# CodeTrack System Architecture 🏗️
 
-## 1. Project Overview
+## 1. System Overview
 
-CodeTrack is a web application for tracking Data Structures and Algorithms (DSA) practice and coding progress across multiple platforms.
+CodeTrack is a fullstack web application that unifies coding progress, competitive programming metrics, and structured DSA roadmaps into a cohesive developer dashboard.
 
-## 2. Technology Stack
+The application uses an asynchronous REST API backend powered by Node.js and MongoDB, coupled with a reactive frontend built with React 19, Vite, and a custom **Forest Green, Warm Cream & Terracotta** design system.
 
-| Layer            | Technology   |
-| ---------------- | ------------ |
-| Frontend         | React        |
-| Build Tool       | Vite         |
-| Routing          | React Router |
-| HTTP Client      | Axios        |
-| Charts           | Recharts     |
-| Icons            | Lucide React |
-| Backend          | Node.js      |
-| API Framework    | Express.js   |
-| Database         | MongoDB      |
-| ODM              | Mongoose     |
-| Authentication   | JWT          |
-| Password Hashing | bcryptjs     |
+---
 
-## 3. High-Level Architecture
+## 2. High-Level Architecture Diagram
 
 ```text
-                 User
-                  |
-                  v
-        React + Vite Frontend
-                  |
-          Axios HTTP Requests
-                  |
-                  v
-        Express REST API
-                  |
-          Authentication
-             Middleware
-                  |
-                  v
-          Route Controllers
-                  |
-                  v
-          Service / Models
-                  |
-                  v
-              MongoDB
+                                  [ User ]
+                                     │
+                                     ▼
+                ┌─────────────────────────────────────────┐
+                │        React 19 + Vite Frontend         │
+                │  - Forest Green & Warm Cream CSS System │
+                │  - React Router 7 + Lucide Icons        │
+                │  - Recharts Area Visualization          │
+                └────────────────────┬────────────────────┘
+                                     │
+                            HTTPS / Axios API Client
+                                     │
+                                     ▼
+                ┌─────────────────────────────────────────┐
+                │          Express.js 5 REST API          │
+                │  - JWT & Rate-Limiting Security Layer   │
+                │  - Helmet & CORS Headers                │
+                │  - Controller & Service Architecture    │
+                └────────┬──────────────────────┬─────────┘
+                         │                      │
+             Mongoose ODM Query                 │ External Platform Scraping
+                         │                      │ (LeetCode, CF, CodeChef, GFG)
+                         ▼                      ▼
+                ┌────────────────┐    ┌───────────────────┐
+                │    MongoDB     │    │   External APIs   │
+                │ Atlas / Local  │    │  & GraphQL Endpts │
+                └────────────────┘    └───────────────────┘
 ```
 
-## 4. Frontend Structure
+---
+
+## 3. Frontend Architecture
+
+### Directory Breakdown
 
 ```text
 frontend/
-├── public/
+├── public/                 # Brand assets, scalable SVGs & HD icons
 ├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── layouts/
-│   ├── pages/
-│   │   ├── Dashboard.jsx
-│   │   ├── Problems.jsx
-│   │   └── Leaderboard.jsx
+│   ├── components/         # Reusable presentation components
+│   │   ├── ActivityChart.jsx   # Weekly activity Recharts visualization
+│   │   ├── Button.jsx          # Semantic primary/secondary/terracotta buttons
+│   │   ├── EmptyState.jsx      # Generic empty state illustration
+│   │   ├── Header.jsx          # Page header with titles and action slots
+│   │   ├── Logo.jsx            # Dynamic inline vector brand mark
+│   │   ├── Navbar.jsx          # Top navbar, search, notifications, theme
+│   │   ├── PlatformCard.jsx    # Live profile statistics and sync controls
+│   │   ├── ProblemTable.jsx    # Problem management data table
+│   │   ├── ProgressBar.jsx     # Linear multi-color progress indicators
+│   │   ├── Sidebar.jsx         # Grouped navigation with active state
+│   │   └── StatCard.jsx        # Metric summary card
+│   ├── context/            # Global context state
+│   │   ├── AuthContext.jsx     # User authentication & session handling
+│   │   └── ThemeContext.jsx    # Dual theme (dark/light) management
+│   ├── hooks/              # Custom React hooks
+│   │   ├── useAuth.js          # Authentication hook
+│   │   ├── useTheme.js         # Theme toggle hook
+│   │   └── useProblems.js      # Problems query hook
+│   ├── layouts/            # Page layout wrappers
+│   │   ├── MainLayout.jsx      # Core dashboard shell (sidebar + navbar + content)
+│   │   └── AuthLayout.jsx      # Centered authentication shell
+│   ├── pages/              # Application views
+│   │   ├── Dashboard.jsx       # Real-time KPIs, charts, linked platforms
+│   │   ├── Sheets.jsx          # 1,447+ curated LeetCode & Codeforces roadmaps
+│   │   ├── Problems.jsx        # Problem bank with filtering and status updates
+│   │   ├── Leaderboard.jsx     # Global rankings with podium badges
+│   │   ├── Profile.jsx         # User identity and profile links
+│   │   ├── Settings.jsx        # Profile, daily goal, and theme preferences
+│   │   ├── Login.jsx           # Sign in view
+│   │   └── Register.jsx        # Sign up view
 │   ├── services/
-│   │   └── api.js
-│   ├── App.jsx
-│   ├── App.css
-│   ├── index.css
-│   └── main.jsx
-├── package.json
-└── vite.config.js
+│   │   └── api.js              # Centralized Axios client with token interceptors
+│   ├── App.css             # Component styling and layout rules
+│   └── index.css           # Global tokens (Forest Green, Warm Cream & Terracotta)
 ```
 
-## 5. Backend Structure
+---
 
-```text
-backend/
-├── src/
-│   ├── config/
-│   │   └── db.js
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── providers/
-│   ├── routes/
-│   ├── services/
-│   ├── app.js
-│   └── server.js
-├── .env
-├── .gitignore
-└── package.json
-```
+## 4. Backend Architecture
 
-## 6. Request Flow
+### Design Patterns
+* **Controller-Service Layer**: Controllers handle HTTP validation and response serialization, while services contain business logic, multi-platform aggregation, and database queries.
+* **Provider Adapters**: Independent client adapters for each competitive programming platform (`LeetCodeProvider`, `CodeforcesProvider`, `CodeChefProvider`, `GeeksforGeeksProvider`, `GitHubProvider`) implementing normalized data structures.
+* **Resilient Data Synchronization**: Platform sync operations execute with individual error boundaries so one failing external provider does not interrupt the entire sync cycle.
 
-1. A user interacts with the React interface.
-2. The frontend sends an HTTP request through Axios.
-3. Express receives the request and matches the API route.
-4. Authentication middleware validates the JWT when required.
-5. The controller processes the request.
-6. Mongoose reads or writes data in MongoDB.
-7. Express returns a JSON response.
-8. React updates the interface with the returned data.
+---
 
-## 7. Security
+## 5. Security & Reliability
 
-- Hash passwords using bcryptjs.
-- Protect private endpoints with JWT authentication.
-- Validate and sanitize incoming data.
-- Configure CORS for trusted frontend origins.
-- Use Helmet for HTTP security headers.
-- Apply rate limiting to sensitive endpoints.
-- Keep secrets and database credentials in environment variables.
-- Never commit `.env` files to Git.
-
-## 8. Development Ports
-
-| Service  | Local URL                             |
-| -------- | ------------------------------------- |
-| Frontend | `http://localhost:5173`               |
-| Backend  | `http://localhost:5000`               |
-| MongoDB  | `mongodb://127.0.0.1:27017/codetrack` |
-
-These ports are the intended development configuration; change them if your environment uses different ports.
+* **Password Security**: Passwords hashed using `bcryptjs` with salt round factor 12.
+* **Authentication**: Stateless JSON Web Tokens (JWT) verified via Express middleware.
+* **API Rate Limiting**: Global and endpoint-specific rate limiting via `express-rate-limit`.
+* **CORS Protection**: Whitelisted origin matching supporting local development and production Vercel domains.
+* **Content Security**: Helmet headers applied to sanitize response headers.

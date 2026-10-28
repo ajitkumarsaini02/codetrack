@@ -1,166 +1,235 @@
-# CodeTrack API Documentation
+# CodeTrack API Documentation 📡
 
 ## 1. Overview
 
-CodeTrack is a DSA Progress Tracker that helps users track coding problems, daily practice, study hours, streaks, and coding platform progress.
+CodeTrack provides a RESTful API for tracking coding practice, multi-platform profile statistics (LeetCode, Codeforces, CodeChef, GeeksforGeeks, GitHub), curated DSA mastery sheets, and community leaderboards.
 
-**Base URL:** `http://localhost:5000/api/v1`
+* **Base URL:** `http://localhost:5000/api`
+* **Production Base URL:** `https://your-backend.onrender.com/api`
+* **Authentication:** Bearer JWT in the `Authorization` header
 
-**Backend:** Node.js, Express.js  
-**Database:** MongoDB  
-**Authentication:** JWT (JSON Web Token)
+---
 
 ## 2. Health Check
 
-### Check API Status
+### GET `/health`
+Check backend server status and database connectivity.
 
-- **Method:** GET
-- **Endpoint:** `/api/v1/health`
-- **Authentication:** Not required
-
-Example response:
-
+**Response (200 OK):**
 ```json
 {
-  "status": "success",
-  "message": "CodeTrack API is running"
+  "success": true,
+  "status": "OK",
+  "database": "connected",
+  "message": "CodeTrack backend is healthy"
 }
 ```
 
-## 3. Authentication APIs
+---
 
-### Register User
+## 3. Authentication Endpoints
 
-- **Method:** POST
-- **Endpoint:** `/api/v1/auth/register`
+### POST `/auth/register`
+Register a new developer account.
 
-Request body:
-
+**Request Body:**
 ```json
 {
-  "name": "Alex Developer",
+  "name": "Alex Dev",
+  "username": "alexdev",
   "email": "alex@example.com",
-  "password": "StrongPassword123"
+  "password": "SecurePassword123"
 }
 ```
 
-### Login User
-
-- **Method:** POST
-- **Endpoint:** `/api/v1/auth/login`
-
-Request body:
-
+**Response (201 Created):**
 ```json
 {
-  "email": "alex@example.com",
-  "password": "StrongPassword123"
-}
-```
-
-Example response:
-
-```json
-{
-  "status": "success",
-  "token": "JWT_TOKEN",
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIs...",
   "user": {
-    "id": "USER_ID",
-    "name": "Alex Developer",
+    "_id": "671fb2...",
+    "name": "Alex Dev",
+    "username": "alexdev",
     "email": "alex@example.com"
   }
 }
 ```
 
-Protected endpoints should receive this header:
+### POST `/auth/login`
+Authenticate with email and password.
 
-```http
-Authorization: Bearer JWT_TOKEN
-```
-
-## 4. Problems APIs
-
-Suggested endpoints:
-
-| Method | Endpoint               | Purpose          |
-| ------ | ---------------------- | ---------------- |
-| GET    | `/api/v1/problems`     | Get problems     |
-| GET    | `/api/v1/problems/:id` | Get one problem  |
-| POST   | `/api/v1/problems`     | Add a problem    |
-| PUT    | `/api/v1/problems/:id` | Update a problem |
-| DELETE | `/api/v1/problems/:id` | Delete a problem |
-
-Example problem:
-
+**Request Body:**
 ```json
 {
-  "title": "Two Sum",
-  "platform": "LeetCode",
-  "difficulty": "Easy",
-  "topic": "Arrays",
-  "url": "https://leetcode.com/problems/two-sum/",
-  "status": "Solved"
+  "email": "alex@example.com",
+  "password": "SecurePassword123"
 }
 ```
 
-## 5. Dashboard API
+### GET `/auth/me`
+Get current authenticated user profile.
+* **Headers:** `Authorization: Bearer <token>`
 
-- **Method:** GET
-- **Suggested endpoint:** `/api/v1/dashboard`
-- **Authentication:** Required
+---
 
-Example response:
+## 4. Coding Platforms & Live Sync
 
+### GET `/platforms`
+Get user's connected coding handles and cached metrics.
+
+### POST `/platforms`
+Link a new coding platform handle.
+
+**Request Body:**
 ```json
 {
-  "problemsSolved": 120,
-  "currentStreak": 7,
-  "studyHours": 35,
-  "platforms": 4,
-  "dailyGoal": {
-    "completed": 2,
-    "target": 3
-  }
+  "platform": "leetcode",
+  "username": "tourist"
 }
 ```
 
-## 6. Progress APIs
+Supported `platform` values:
+`leetcode`, `codeforces`, `codechef`, `gfg`, `github`.
 
-Suggested endpoints:
+### DELETE `/platforms/:id`
+Unlink a connected coding platform.
 
-| Method | Endpoint                   | Purpose               |
-| ------ | -------------------------- | --------------------- |
-| GET    | `/api/v1/progress`         | Get user progress     |
-| POST   | `/api/v1/progress`         | Record daily progress |
-| GET    | `/api/v1/progress/history` | Get progress history  |
+### POST `/platforms/sync`
+Trigger a real-time sync across all connected coding profiles.
 
-## 7. Leaderboard API
+### POST `/platforms/sync/:platform`
+Trigger a live sync for a specific platform (e.g. `leetcode` or `codeforces`).
 
-- **Method:** GET
-- **Suggested endpoint:** `/api/v1/leaderboard`
-- **Authentication:** Depends on implementation
+---
 
-Returns ranked users based on the selected scoring rules.
+## 5. Curated DSA Mastery Sheets
 
-## 8. Error Response Format
+### GET `/sheets`
+Retrieve available curated roadmaps and overall user completion percentage.
 
+**Response (200 OK):**
 ```json
 {
-  "status": "error",
-  "message": "An error occurred"
+  "success": true,
+  "data": [
+    {
+      "id": "leetcode",
+      "name": "LeetCode DSA Mastery Sheet",
+      "tagline": "947 Curated Problems • 22 Phases • 115 Topics",
+      "platform": "leetcode",
+      "totalProblems": 947,
+      "phaseCount": 22,
+      "solvedCount": 45,
+      "progressPercentage": 4.8
+    },
+    {
+      "id": "codeforces",
+      "name": "Codeforces DSA Mastery Sheet",
+      "tagline": "500 Curated Problems • Strict Sequential Order",
+      "platform": "codeforces",
+      "totalProblems": 500,
+      "phaseCount": 22,
+      "solvedCount": 12,
+      "progressPercentage": 2.4
+    }
+  ]
 }
 ```
 
-Common HTTP status codes:
+### GET `/sheets/:sheetId`
+Get full topic-wise roadmap with phases, topics, difficulty ratings, and solved flags.
+* Parameter `sheetId`: `leetcode` | `codeforces`
 
-- `200` — Request successful
-- `201` — Resource created
-- `400` — Invalid request
-- `401` — Authentication required or invalid
-- `403` — Access forbidden
-- `404` — Resource not found
-- `500` — Internal server error
+### POST `/sheets/:sheetId/progress`
+Toggle solved status of a curated sheet problem for the authenticated user.
 
-## 9. Implementation Note
+**Request Body:**
+```json
+{
+  "problemTitle": "Two Sum",
+  "status": "solved"
+}
+```
 
-The endpoints in this document are a proposed API contract. They are not confirmed as implemented until the corresponding Express routes and controllers are created and tested.
+---
+
+## 6. DSA Practice Problems
+
+### GET `/problems`
+Fetch custom user problems with filtering and pagination.
+
+**Query Parameters:**
+* `difficulty`: `Easy` | `Medium` | `Hard`
+* `status`: `todo` | `attempted` | `solved`
+* `page`: page number (default: 1)
+* `limit`: records per page (default: 50, max: 2500)
+
+### POST `/problems`
+Add a custom practice problem.
+
+**Request Body:**
+```json
+{
+  "title": "Median of Two Sorted Arrays",
+  "platform": "leetcode",
+  "topics": ["Binary Search", "Array"],
+  "difficulty": "Hard",
+  "status": "solved",
+  "problemUrl": "https://leetcode.com/problems/median-of-two-sorted-arrays/"
+}
+```
+
+### PUT `/problems/:id`
+Update status, topic tags, or notes on an existing problem.
+
+### DELETE `/problems/:id`
+Remove problem from database.
+
+---
+
+## 7. Dashboard & Analytics
+
+### GET `/dashboard`
+Aggregated overview including:
+* Summary counts (total solved, peak rating, active streak)
+* Connected platform stats
+* 7-day practice activity distribution
+* Difficulty distribution (Easy, Medium, Hard)
+
+### GET `/analytics`
+In-depth breakdown of topic-wise mastery, problem completion percentages, and platform distributions.
+
+---
+
+## 8. Leaderboard & Community
+
+### GET `/leaderboard`
+Public or authenticated global developer rankings sorted by total problems solved and peak contest ratings.
+
+---
+
+## 9. Settings & Profile
+
+### PUT `/settings`
+Update user preferences:
+```json
+{
+  "dailyGoal": 5,
+  "theme": "dark"
+}
+```
+
+### PUT `/profile`
+Update user display name, bio, and GitHub handle.
+
+---
+
+## 10. Standard Error Response
+
+```json
+{
+  "success": false,
+  "message": "Descriptive error message"
+}
+```

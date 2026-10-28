@@ -1,113 +1,114 @@
-# CodeTrack Database Schema
+# CodeTrack Database Schema 🗄️
 
 ## 1. Overview
 
-CodeTrack uses MongoDB with Mongoose to store user accounts, coding problems, daily practice records, and coding platform profiles.
+CodeTrack utilizes **MongoDB** with **Mongoose** to persist user accounts, custom practice problems, linked coding profiles, and curated DSA sheet progress.
 
-The following schema is a proposed design for the application.
+---
 
-## 2. Users Collection
+## 2. Collections Specification
 
-Collection: `users`
+### 2.1 Users (`users`)
 
-| Field       | Type     | Description           |
-| ----------- | -------- | --------------------- |
-| `_id`       | ObjectId | Unique user ID        |
-| `name`      | String   | User's display name   |
-| `email`     | String   | Unique email address  |
-| `password`  | String   | Hashed password       |
-| `createdAt` | Date     | Account creation time |
-| `updatedAt` | Date     | Last update time      |
+Stores registered developer profiles and application settings.
 
-Example:
+| Field | Type | Attributes | Description |
+| :--- | :--- | :--- | :--- |
+| `_id` | ObjectId | Primary Key | Auto-generated user ID |
+| `name` | String | Required | Full display name |
+| `username` | String | Unique, Indexed | Unique profile handle |
+| `email` | String | Unique, Indexed | Normalized email address |
+| `password` | String | Required | bcrypt hashed password |
+| `bio` | String | Optional | Profile bio |
+| `github` | String | Optional | Linked GitHub username |
+| `settings.dailyGoal` | Number | Default: 2 | Daily problem target |
+| `settings.theme` | String | Default: `"dark"` | Preferred theme (`dark` / `light`) |
+| `createdAt` | Date | Auto | Account registration timestamp |
+| `updatedAt` | Date | Auto | Last update timestamp |
 
-```json
-{
-  "name": "Alex Developer",
-  "email": "alex@example.com",
-  "password": "HASHED_PASSWORD"
-}
-```
+---
 
-The password must contain a secure hash, never the original plain-text password.
+### 2.2 Problems (`problems`)
 
-## 3. Problems Collection
+Stores user-created practice problems.
 
-Collection: `problems`
+| Field | Type | Attributes | Description |
+| :--- | :--- | :--- | :--- |
+| `_id` | ObjectId | Primary Key | Problem record ID |
+| `userId` | ObjectId | Ref: `User`, Indexed | Owner reference |
+| `title` | String | Required, Indexed | Problem name |
+| `platform` | String | Indexed | Platform (`leetcode`, `codeforces`, etc.) |
+| `difficulty` | String | Enum | `Easy`, `Medium`, `Hard` |
+| `topics` | [String] | Array | Array of DSA topic tags |
+| `status` | String | Enum | `todo`, `attempted`, `solved` |
+| `problemUrl` | String | Optional | External question link |
+| `notes` | String | Optional | Personal solution notes |
+| `solvedAt` | Date | Optional | Timestamp when marked solved |
+| `createdAt` | Date | Auto | Record creation timestamp |
 
-| Field        | Type     | Description               |
-| ------------ | -------- | ------------------------- |
-| `_id`        | ObjectId | Unique problem ID         |
-| `userId`     | ObjectId | Reference to user         |
-| `title`      | String   | Problem title             |
-| `platform`   | String   | LeetCode, CodeChef, etc.  |
-| `difficulty` | String   | Easy, Medium, Hard        |
-| `topic`      | String   | DSA topic                 |
-| `url`        | String   | Problem URL               |
-| `status`     | String   | Solved, Attempted, Todo   |
-| `solvedAt`   | Date     | Solve date, if applicable |
-| `createdAt`  | Date     | Record creation time      |
+---
 
-## 4. Daily Progress Collection
+### 2.3 Platforms (`platforms`)
 
-Collection: `dailyprogress`
+Stores linked third-party coding platform handles and cached statistics.
 
-| Field            | Type     | Description              |
-| ---------------- | -------- | ------------------------ |
-| `_id`            | ObjectId | Unique record ID         |
-| `userId`         | ObjectId | Reference to user        |
-| `date`           | Date     | Practice date            |
-| `problemsSolved` | Number   | Problems solved that day |
-| `studyMinutes`   | Number   | Time spent practicing    |
-| `goalTarget`     | Number   | Daily problem target     |
-| `createdAt`      | Date     | Record creation time     |
+| Field | Type | Attributes | Description |
+| :--- | :--- | :--- | :--- |
+| `_id` | ObjectId | Primary Key | Platform link ID |
+| `userId` | ObjectId | Ref: `User`, Indexed | Owner reference |
+| `platform` | String | Indexed | `leetcode`, `codeforces`, `codechef`, `gfg`, `github` |
+| `username` | String | Required | External platform handle |
+| `totalSolved` | Number | Default: 0 | Total problems solved on platform |
+| `easySolved` | Number | Default: 0 | Easy problems solved |
+| `mediumSolved`| Number | Default: 0 | Medium problems solved |
+| `hardSolved` | Number | Default: 0 | Hard problems solved |
+| `rating` | Number | Optional | Current contest rating |
+| `maxRating` | Number | Optional | Peak contest rating |
+| `globalRank` | Number | Optional | Worldwide leaderboard ranking |
+| `countryRank`| Number | Optional | National leaderboard ranking |
+| `stars` | Number | Optional | Star ranking (e.g. CodeChef) |
+| `streak` | Number | Optional | Current platform streak |
+| `syncStatus` | String | Enum | `idle`, `syncing`, `success`, `failed` |
+| `syncError` | String | Optional | Error message if sync failed |
+| `lastSyncedAt`| Date | Optional | Last successful sync timestamp |
 
-A unique compound index on `userId` and `date` can prevent duplicate daily records for the same user.
+**Indexes:**
+* Compound unique index: `{ userId: 1, platform: 1 }` prevents duplicate platforms per user.
 
-## 5. Platform Profiles Collection
+---
 
-Collection: `platformprofiles`
+### 2.4 User Sheet Progress (`usersheetprogresses`)
 
-| Field            | Type     | Description                   |
-| ---------------- | -------- | ----------------------------- |
-| `_id`            | ObjectId | Unique profile ID             |
-| `userId`         | ObjectId | Reference to user             |
-| `platform`       | String   | Platform name                 |
-| `username`       | String   | Platform username             |
-| `profileUrl`     | String   | Public profile URL            |
-| `problemsSolved` | Number   | Last known solved count       |
-| `rating`         | Number   | Platform rating, if available |
-| `lastSyncedAt`   | Date     | Last successful sync          |
+Stores interactive progress on curated DSA Mastery Sheets (LeetCode 947 & Codeforces 500).
 
-Possible platforms include LeetCode, CodeChef, Codeforces, GeeksforGeeks, and GitHub.
+| Field | Type | Attributes | Description |
+| :--- | :--- | :--- | :--- |
+| `_id` | ObjectId | Primary Key | Progress record ID |
+| `userId` | ObjectId | Ref: `User`, Indexed | Owner reference |
+| `sheetId` | String | Indexed | Identifier (`leetcode` or `codeforces`) |
+| `problemTitle`| String | Required, Indexed | Canonical title of the sheet problem |
+| `status` | String | Enum | `solved`, `todo` |
+| `solvedAt` | Date | Optional | Time when problem was checked off |
 
-## 6. Relationships
+**Indexes:**
+* Compound unique index: `{ userId: 1, sheetId: 1, problemTitle: 1 }` ensures fast lookups and atomic status toggles.
+
+---
+
+## 3. Entity Relationship Diagram
 
 ```text
-User
- ├── Problems
- ├── DailyProgress
- └── PlatformProfiles
+               ┌───────────────────────┐
+               │         User          │
+               │  (_id, email, name)   │
+               └───────────┬───────────┘
+                           │ 1
+                           │
+         ┌─────────────────┼─────────────────┐
+         │ *               │ *               │ *
+         ▼                 ▼                 ▼
+┌────────────────┐ ┌────────────────┐ ┌────────────────────┐
+│    Problem     │ │    Platform    │ │ UserSheetProgress  │
+│ (userId, title)│ │ (userId, handle│ │(userId, problemKey)│
+└────────────────┘ └────────────────┘ └────────────────────┘
 ```
-
-Each related document stores `userId` as a reference to the owning user.
-
-## 7. Recommended Indexes
-
-- `users.email` — unique index
-- `problems.userId` — index
-- `dailyprogress.userId + dailyprogress.date` — unique compound index
-- `platformprofiles.userId + platformprofiles.platform` — unique compound index
-
-## 8. Data Integrity and Security
-
-- Validate all fields through Mongoose schemas.
-- Use references to associate records with their owners.
-- Ensure users can only access their own private records.
-- Validate difficulty and status against allowed values.
-- Store timestamps consistently.
-- Avoid storing access tokens or credentials for external platforms unless securely required.
-
-## 9. Implementation Status
-
-This document describes the proposed database design. Collections and indexes will be created by Mongoose models and database operations when the corresponding backend code is implemented.
