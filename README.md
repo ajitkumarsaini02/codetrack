@@ -1,9 +1,25 @@
-# CodeTrack 🌲
+# 🌲 CodeTrack — Cross-Platform Coding & DSA Progress Tracker
 
-> **Unified Cross-Platform DSA & Coding Progress Tracker**
+> **Track practice. Build consistency. Dominate competitive programming.**  
 > Designed with a **Forest Green, Warm Cream & Terracotta** aesthetic.
 
 CodeTrack is a fullstack developer platform designed for software engineers and competitive programmers to track, log, and analyze their Data Structures and Algorithms (DSA) practice across platforms like **LeetCode**, **Codeforces**, **CodeChef**, **GeeksforGeeks**, and **GitHub**.
+
+<br />
+
+<div align="center">
+
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white)](https://reactrouter.com/)
+[![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+
+[![License: ISC](https://img.shields.io/badge/License-ISC-007EC6?style=for-the-badge)](https://opensource.org/licenses/ISC)
+
+</div>
 
 ---
 
@@ -56,12 +72,25 @@ CodeTrack uses a centralized design system built on CSS variables:
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-| :--- | :--- |
-| **Frontend** | React 19, Vite 8, React Router 7, Axios, Recharts, Lucide React |
-| **Backend** | Node.js, Express.js 5, Mongoose 9, JWT, bcryptjs, Helmet, Express Rate Limit |
-| **Database** | MongoDB |
-| **Styling** | Custom Vanilla CSS Design System with CSS variables and responsive shell |
+### Core Technologies
+
+| Category | Badges | Details |
+| :--- | :--- | :--- |
+| **Frontend** | [![React 19](https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/) [![Vite 8](https://img.shields.io/badge/Vite_8-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/) | React 19 SPA powered by Vite 8 build engine with hot module replacement |
+| **Backend** | [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/) [![Express 5](https://img.shields.io/badge/Express_5-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/) | RESTful API architecture built on Express.js 5 and Node.js |
+| **Database & ODM** | [![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/) [![Mongoose 9](https://img.shields.io/badge/Mongoose_9-880000?style=flat-square&logo=mongoose&logoColor=white)](https://mongoosejs.com/) | Document store with schemas, compound indexing and aggregation pipelines |
+| **Routing** | [![React Router 7](https://img.shields.io/badge/React_Router_7-CA4245?style=flat-square&logo=reactrouter&logoColor=white)](https://reactrouter.com/) | Declarative client-side routing with responsive nested shells |
+| **Analytics & Charts** | [![Recharts](https://img.shields.io/badge/Recharts-22B5BF?style=flat-square&logo=d3dotjs&logoColor=white)](https://recharts.org/) | Responsive SVG area charts with custom tooltips & active markers |
+| **Security & Auth** | [![JWT](https://img.shields.io/badge/JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)](https://jwt.io/) [![Helmet](https://img.shields.io/badge/Helmet-000000?style=flat-square&logo=helmet&logoColor=white)](https://helmetjs.github.io/) | Stateless JWT auth, bcryptjs password hashing, rate limiting & CORS |
+| **UI & Icons** | [![Lucide Icons](https://img.shields.io/badge/Lucide_Icons-F56565?style=flat-square&logo=feather&logoColor=white)](https://lucide.dev/) [![CSS Variables](https://img.shields.io/badge/CSS_Design_System-315B40?style=flat-square)](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Forest Green, Warm Cream & Terracotta Design System with dark/light themes |
+
+### Supported Coding Platforms
+
+[![LeetCode](https://img.shields.io/badge/LeetCode-FFA116?style=for-the-badge&logo=LeetCode&logoColor=black)](https://leetcode.com/)
+[![Codeforces](https://img.shields.io/badge/Codeforces-1F8ACB?style=for-the-badge&logo=Codeforces&logoColor=white)](https://codeforces.com/)
+[![CodeChef](https://img.shields.io/badge/CodeChef-5B4638?style=for-the-badge&logo=CodeChef&logoColor=white)](https://www.codechef.com/)
+[![GeeksforGeeks](https://img.shields.io/badge/GeeksforGeeks-298D46?style=for-the-badge&logo=GeeksforGeeks&logoColor=white)](https://www.geeksforgeeks.org/)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/)
 
 ---
 

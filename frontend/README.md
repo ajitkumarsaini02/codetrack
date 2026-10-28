@@ -1,6 +1,20 @@
 # CodeTrack Frontend 🌲
 
-The frontend client for **CodeTrack**, built with React 19, Vite 8, and a custom **Forest Green, Warm Cream & Terracotta** design system inspired by Watermelon UI and Shadcn Admin.
+> **Reactive Developer Dashboard & DSA Progress Tracker**  
+> Built with React 19, Vite 8, and the **Forest Green, Warm Cream & Terracotta** design system.
+
+<br />
+
+<div align="center">
+
+[![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white)](https://reactrouter.com/)
+[![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)](https://axios-http.com/)
+[![Recharts](https://img.shields.io/badge/Recharts-22B5BF?style=for-the-badge&logo=d3dotjs&logoColor=white)](https://recharts.org/)
+[![Lucide](https://img.shields.io/badge/Lucide-F56565?style=for-the-badge&logo=feather&logoColor=white)](https://lucide.dev/)
+
+</div>
 
 ---
 
