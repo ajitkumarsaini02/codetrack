@@ -1,8 +1,5 @@
 # 🌲 CodeTrack — Cross-Platform Coding & DSA Progress Tracker
 
-> **Track practice. Build consistency. Dominate competitive programming.**  
-> Designed with a **Forest Green, Warm Cream & Terracotta** aesthetic.
-
 CodeTrack is a fullstack developer platform designed for software engineers and competitive programmers to track, log, and analyze their Data Structures and Algorithms (DSA) practice across platforms like **LeetCode**, **Codeforces**, **CodeChef**, **GeeksforGeeks**, and **GitHub**.
 
 <br />

@@ -1,7 +1,6 @@
 # CodeTrack Frontend 🌲
 
-> **Reactive Developer Dashboard & DSA Progress Tracker**  
-> Built with React 19, Vite 8, and the **Forest Green, Warm Cream & Terracotta** design system.
+The reactive developer client for CodeTrack, built with React 19, Vite 8, and the **Forest Green, Warm Cream & Terracotta** design system.
 
 <br />
 
