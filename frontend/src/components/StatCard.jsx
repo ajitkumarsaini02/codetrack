@@ -3,28 +3,49 @@ const StatCard = ({
   value,
   subtitle,
   icon: Icon,
-  color = "#7C5CFC",
+  color = "#D6AD70",
+  badge = null,
+  progress = null,
+  className = "",
 }) => {
   return (
-    <div className="stat-card">
+    <div className={`stat-card ${className}`.trim()}>
       <div className="stat-card-top">
-        <span>{title}</span>
+        <span className="stat-card-title">{title}</span>
 
-        {Icon && (
-          <div
-            className="stat-icon"
-            style={{
-              color: color,
-              backgroundColor: `${color}20`,
-            }}
-          >
-            <Icon size={22} />
+        <div className="stat-card-top-right">
+          {badge && <span className="stat-card-badge">{badge}</span>}
+          {Icon && (
+            <div
+              className="stat-icon"
+              style={{
+                color: color,
+                backgroundColor: `${color}14`,
+                borderColor: `${color}28`,
+              }}
+            >
+              <Icon size={18} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="stat-card-main">
+        <div className="stat-card-value">{value}</div>
+        {progress != null && (
+          <div className="stat-card-mini-track">
+            <div
+              className="stat-card-mini-fill"
+              style={{
+                width: `${Math.min(100, Math.max(0, progress))}%`,
+                backgroundColor: color,
+              }}
+            />
           </div>
         )}
       </div>
 
-      <h2>{value}</h2>
-      <p>{subtitle}</p>
+      {subtitle && <p className="stat-card-subtitle">{subtitle}</p>}
     </div>
   );
 };

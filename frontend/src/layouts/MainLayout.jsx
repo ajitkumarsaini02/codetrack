@@ -8,10 +8,13 @@ const MainLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+
   // Automatically close mobile sidebar on navigation
-  useEffect(() => {
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname);
     setMobileOpen(false);
-  }, [location.pathname]);
+  }
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {

@@ -63,8 +63,8 @@ const Leaderboard = () => {
         </div>
 
         {loading ? (
-          <div style={{ textAlign: "center", padding: "48px 20px", color: "#94a3b8" }}>
-            Loading rankings...
+          <div className="loading-state">
+            <p>Loading rankings...</p>
           </div>
         ) : users.length === 0 ? (
           <EmptyState
@@ -73,38 +73,40 @@ const Leaderboard = () => {
           />
         ) : (
           <div className="table-container">
-            <table className="problem-table">
+            <table className="problem-table leaderboard-table">
               <thead>
                 <tr>
-                  <th>Rank</th>
+                  <th style={{ width: 90 }}>Rank</th>
                   <th>Developer</th>
-                  <th>Problems Solved</th>
-                  <th>Rating</th>
+                  <th style={{ width: 180 }}>Problems Solved</th>
+                  <th style={{ width: 140 }}>Rating</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user.rank}>
-                    <td>
-                      {user.rank <= 3 ? (
-                        <Medal
-                          size={18}
-                          style={{
-                            color:
-                              user.rank === 1
-                                ? "#F59E0B"
-                                : user.rank === 2
-                                  ? "#94A3B8"
-                                  : "#B45309",
-                          }}
-                        />
+                  <tr key={user.rank} className={user.rank <= 3 ? `top-rank-${user.rank}` : ""}>
+                    <td className="rank-cell">
+                      {user.rank === 1 ? (
+                        <span className="rank-badge gold" title="1st Place">
+                          <Medal size={17} /> 1
+                        </span>
+                      ) : user.rank === 2 ? (
+                        <span className="rank-badge silver" title="2nd Place">
+                          <Medal size={17} /> 2
+                        </span>
+                      ) : user.rank === 3 ? (
+                        <span className="rank-badge bronze" title="3rd Place">
+                          <Medal size={17} /> 3
+                        </span>
                       ) : (
-                        `#${user.rank}`
+                        <span className="rank-number">#{user.rank}</span>
                       )}
                     </td>
-                    <td style={{ fontWeight: 600 }}>{user.name}</td>
-                    <td>{user.solved}</td>
-                    <td>{user.rating || "-"}</td>
+                    <td className="developer-name-cell">{user.name}</td>
+                    <td className="solved-cell">
+                      <strong>{user.solved}</strong>
+                    </td>
+                    <td className="rating-cell">{user.rating || "—"}</td>
                   </tr>
                 ))}
               </tbody>

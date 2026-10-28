@@ -22,11 +22,11 @@ import {
 } from "lucide-react";
 
 const platformColors = {
-  leetcode: "#FFA116",
-  codeforces: "#3B82F6",
-  codechef: "#A855F7",
-  gfg: "#22C55E",
-  github: "#94A3B8",
+  leetcode: "#F59E0B",
+  codeforces: "#60A5FA",
+  codechef: "#8B5CF6",
+  gfg: "#22A06B",
+  github: "#9CA3AF",
 };
 
 const platformDisplayNames = {
@@ -205,10 +205,12 @@ const Dashboard = () => {
       title: "Problems Solved",
       value: totalSolved,
       subtitle: liveDashboard
-        ? "Synced across platforms"
+        ? "Synced across linked profiles"
         : "Total problems completed",
       icon: Code2,
-      color: "#7C5CFC",
+      color: "#D6AD70",
+      badge: "All Platforms",
+      className: "stat-card-hero",
     },
     {
       id: 2,
@@ -216,26 +218,36 @@ const Dashboard = () => {
       value: highestRating > 0 ? highestRating : "—",
       subtitle: "Peak contest rating",
       icon: Trophy,
-      color: "#F59E0B",
+      color: "#E3B56C",
+      badge: highestRating > 0 ? "Peak" : null,
     },
     {
       id: 3,
       title: "DSA Sheet Solved",
       value: manuallySolved,
-      subtitle: `${trackedProblems > 0 ? trackedProblems : 2498} curated problems`,
+      subtitle: `${trackedProblems > 0 ? trackedProblems : 2498} curated catalog`,
       icon: Flame,
-      color: "#EF4444",
+      color: "#E58A7A",
+      progress:
+        trackedProblems > 0
+          ? (manuallySolved / trackedProblems) * 100
+          : (manuallySolved / 2498) * 100,
     },
     {
       id: 4,
       title: "Daily Goal",
-      value: `${todaySolved}/${dailyGoal}`,
+      value: `${todaySolved} / ${dailyGoal}`,
       subtitle:
         todaySolved >= dailyGoal
           ? "Goal completed today! 🎉"
           : `${Math.max(0, dailyGoal - todaySolved)} problems left today`,
       icon: Target,
-      color: "#22C55E",
+      color: "#8BBF91",
+      progress: dailyGoal > 0 ? (todaySolved / dailyGoal) * 100 : 0,
+      badge:
+        todaySolved >= dailyGoal
+          ? "Done"
+          : `${Math.round((todaySolved / Math.max(1, dailyGoal)) * 100)}%`,
     },
   ];
 
@@ -328,28 +340,11 @@ const Dashboard = () => {
       />
 
       {!isAuthenticated && (
-        <div
-          className="panel"
-          style={{
-            marginBottom: 24,
-            border: "1px solid rgba(124, 92, 252, 0.3)",
-            background: "rgba(124, 92, 252, 0.08)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-              gap: 16,
-            }}
-          >
-            <div>
-              <h4 style={{ margin: 0, color: "#C7D2FE", fontSize: 15 }}>
-                Connect your live account
-              </h4>
-              <p style={{ margin: "4px 0 0", color: "#9CA3AF", fontSize: 13 }}>
+        <div className="guest-banner">
+          <div className="guest-banner-content">
+            <div className="guest-banner-text">
+              <h4>Connect your live account</h4>
+              <p>
                 Sign in to link your LeetCode and Codeforces accounts, track
                 real-time progress, and save problems to MongoDB.
               </p>
@@ -362,19 +357,7 @@ const Dashboard = () => {
       )}
 
       {syncMessage && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "10px 16px",
-            background: "rgba(34, 197, 94, 0.15)",
-            border: "1px solid #22C55E",
-            borderRadius: 10,
-            color: "#4ADE80",
-            marginBottom: 20,
-          }}
-        >
+        <div className="sync-banner success">
           <CheckCircle2 size={18} />
           <span>{syncMessage}</span>
         </div>
@@ -389,6 +372,9 @@ const Dashboard = () => {
             subtitle={stat.subtitle}
             icon={stat.icon}
             color={stat.color}
+            badge={stat.badge}
+            progress={stat.progress}
+            className={stat.className}
           />
         ))}
       </section>
@@ -398,15 +384,7 @@ const Dashboard = () => {
 
         <div className="panel">
           <div className="panel-heading">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                width: "100%",
-                gap: 12,
-              }}
-            >
+            <div className="dsa-progress-header">
               <div>
                 <h3>DSA Progress Tracker</h3>
                 <p>
@@ -426,19 +404,19 @@ const Dashboard = () => {
               label="Easy Problems"
               value={easyCount}
               max={easyTarget}
-              color="#22C55E"
+              color="#8BBF91"
             />
             <ProgressBar
               label="Medium Problems"
               value={mediumCount}
               max={mediumTarget}
-              color="#F59E0B"
+              color="#E3B56C"
             />
             <ProgressBar
               label="Hard Problems"
               value={hardCount}
               max={hardTarget}
-              color="#EF4444"
+              color="#E58A7A"
             />
           </div>
 
@@ -469,7 +447,7 @@ const Dashboard = () => {
             <p>Your coding profiles at a glance</p>
           </div>
           {isAuthenticated && (
-            <div style={{ display: "flex", gap: 10 }}>
+            <div className="panel-heading-actions">
               <Button
                 variant="secondary"
                 onClick={handleSync}

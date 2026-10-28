@@ -2,7 +2,7 @@ const ProgressBar = ({
   label = "Daily Goal",
   value = 0,
   max = 5,
-  color = "#7C5CFC",
+  color = "#D6AD70",
 }) => {
   const percentage =
     max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
@@ -10,25 +10,20 @@ const ProgressBar = ({
   return (
     <div className="progress-wrapper">
       <div className="progress-heading">
-        <span style={{ fontWeight: 600, color: "#F1F5F9" }}>{label}</span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
-          <strong style={{ color: "#F8FAFC" }}>
+        <span className="progress-label">{label}</span>
+        <span className="progress-counts">
+          <strong className="progress-current">
             {Number(value || 0).toLocaleString()}
           </strong>
-          <span style={{ color: "#94A3B8" }}>
+          <span className="progress-max">
             / {Number(max || 1).toLocaleString()}
           </span>
           <span
+            className="progress-pill-badge"
             style={{
               color: color,
               backgroundColor: `${color}18`,
-              border: `1px solid ${color}35`,
-              borderRadius: "6px",
-              padding: "1px 6px",
-              fontSize: "11px",
-              fontWeight: 700,
-              minWidth: "44px",
-              textAlign: "center",
+              borderColor: `${color}33`,
             }}
           >
             {percentage.toFixed(1)}%
@@ -49,7 +44,6 @@ const ProgressBar = ({
           style={{
             width: `${percentage}%`,
             backgroundColor: color,
-            boxShadow: `0 0 10px ${color}60`,
           }}
         />
       </div>

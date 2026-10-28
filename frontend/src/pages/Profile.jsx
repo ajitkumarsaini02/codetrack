@@ -71,12 +71,12 @@ const Profile = () => {
 
         <div className="profile-details">
           <h2>{displayName}</h2>
-          <p style={{ color: "#818CF8", fontWeight: 600 }}>{username}</p>
-          <p>{bio}</p>
+          <p className="profile-username">{username}</p>
+          <p className="profile-bio">{bio}</p>
         </div>
 
         <a
-          className="button button-secondary"
+          className="button button-secondary profile-action-btn"
           href={githubUrl}
           target="_blank"
           rel="noreferrer"
@@ -91,7 +91,7 @@ const Profile = () => {
           value={totalSolved}
           subtitle="Across practice sessions & platforms"
           icon={Code2}
-          color="#7C5CFC"
+          color="#D6AD70"
         />
 
         <StatCard
@@ -99,7 +99,7 @@ const Profile = () => {
           value={peakRating > 0 ? peakRating : "—"}
           subtitle="Peak rating"
           icon={Trophy}
-          color="#F59E0B"
+          color="#E3B56C"
         />
 
         <StatCard
@@ -107,7 +107,7 @@ const Profile = () => {
           value={`${dashboard?.activity?.length ? Math.min(dashboard.activity.length, 7) : 0} Days`}
           subtitle="Consistency count"
           icon={Flame}
-          color="#EF4444"
+          color="#E58A7A"
         />
       </section>
 
@@ -121,8 +121,14 @@ const Profile = () => {
 
         <div className="account-list">
           {!githubProfile && (
-            <a href={githubUrl} target="_blank" rel="noreferrer">
-              GitHub <span>View profile ↗</span>
+            <a href={githubUrl} target="_blank" rel="noreferrer" className="account-link-item">
+              <div className="account-link-left">
+                <strong>GitHub</strong>
+              </div>
+              <span className="account-link-cta">
+                View profile{" "}
+                <ExternalLink size={13} className="ext-icon" />
+              </span>
             </a>
           )}
 
@@ -148,37 +154,24 @@ const Profile = () => {
                 href={p.profileUrl}
                 target="_blank"
                 rel="noreferrer"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
+                className="account-link-item"
               >
-                <div>
+                <div className="account-link-left">
                   <strong>{label}</strong>
-                  <span
-                    style={{
-                      marginLeft: 10,
-                      color: "#94a3b8",
-                      fontSize: 12,
-                    }}
-                  >
+                  <span className="account-extra-info">
                     ({extra})
                   </span>
                 </div>
-                <span>
+                <span className="account-link-cta">
                   View profile{" "}
-                  <ExternalLink
-                    size={13}
-                    style={{ display: "inline", verticalAlign: "middle" }}
-                  />
+                  <ExternalLink size={13} className="ext-icon" />
                 </span>
               </a>
             );
           })}
 
           {platforms.length === 0 && (
-            <p style={{ color: "#94a3b8", fontSize: 13, margin: "8px 0" }}>
+            <p className="account-empty-text">
               No external platforms connected yet. Head to the Dashboard to link
               LeetCode, Codeforces, CodeChef, GeeksforGeeks, or
               GitHub.

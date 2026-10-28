@@ -13,6 +13,14 @@ const ActivityChart = ({ data }) => {
   const { theme } = useTheme();
   const isLight = theme === "light";
 
+  // Warm Neutral Design Tokens
+  const accentColor = isLight ? "#966B2D" : "#D6AD70";
+  const gridColor = isLight ? "#E3E0D6" : "#35342D";
+  const textColor = isLight ? "#777568" : "#A19F93";
+  const cardBg = isLight ? "#FFFFFF" : "#1E1D19";
+  const borderColor = isLight ? "#E3E0D6" : "#35342D";
+  const headingColor = isLight ? "#292821" : "#F0EFE9";
+
   const chartData =
     data && data.length > 0
       ? data
@@ -36,61 +44,75 @@ const ActivityChart = ({ data }) => {
       </div>
 
       <div className="chart-container">
-        <ResponsiveContainer width="100%" height={240}>
+        <ResponsiveContainer width="100%" height={220}>
           <AreaChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            margin={{ top: 10, right: 10, left: -20, bottom: 4 }}
           >
             <defs>
               <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="0%"
-                  stopColor="#7C5CFC"
-                  stopOpacity={isLight ? 0.3 : 0.4}
+                  stopColor={accentColor}
+                  stopOpacity={isLight ? 0.22 : 0.3}
                 />
-                <stop offset="100%" stopColor="#7C5CFC" stopOpacity={0} />
+                <stop offset="100%" stopColor={accentColor} stopOpacity={0} />
               </linearGradient>
             </defs>
 
             <CartesianGrid
-              stroke={isLight ? "#E2E8F0" : "#293449"}
+              stroke={gridColor}
               strokeDasharray="3 3"
+              vertical={false}
             />
             <XAxis
               dataKey="day"
-              stroke={isLight ? "#64748B" : "#9CA3AF"}
-              tick={{ fill: isLight ? "#64748B" : "#9CA3AF", fontSize: 12 }}
+              stroke={gridColor}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: textColor, fontSize: 11.5 }}
             />
             <YAxis
               allowDecimals={false}
-              stroke={isLight ? "#64748B" : "#9CA3AF"}
-              tick={{ fill: isLight ? "#64748B" : "#9CA3AF", fontSize: 12 }}
+              stroke={gridColor}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: textColor, fontSize: 11.5 }}
             />
 
             <Tooltip
               contentStyle={{
-                background: isLight ? "#FFFFFF" : "#171F32",
-                border: isLight ? "1px solid #CBD5E1" : "1px solid #293449",
-                borderRadius: "10px",
-                color: isLight ? "#0F172A" : "#F3F4F6",
+                background: cardBg,
+                border: `1px solid ${borderColor}`,
+                borderRadius: "8px",
+                color: headingColor,
                 boxShadow: isLight
-                  ? "0 10px 25px rgba(15, 23, 42, 0.1)"
-                  : "0 10px 25px rgba(0, 0, 0, 0.5)",
+                  ? "0 4px 12px rgba(41, 40, 33, 0.08)"
+                  : "0 8px 24px rgba(0, 0, 0, 0.5)",
+                padding: "8px 12px",
+                fontSize: "12px",
               }}
               labelStyle={{
-                color: isLight ? "#0F172A" : "#F3F4F6",
+                color: headingColor,
                 fontWeight: 600,
+                marginBottom: 2,
               }}
-              itemStyle={{ color: "#7C5CFC", fontWeight: 600 }}
+              itemStyle={{ color: accentColor, fontWeight: 600, padding: 0 }}
             />
 
             <Area
               type="monotone"
               dataKey="solved"
               name="Problems Solved"
-              stroke="#7C5CFC"
-              strokeWidth={3}
+              stroke={accentColor}
+              strokeWidth={2}
               fill="url(#activityGradient)"
+              activeDot={{
+                r: 4.5,
+                fill: accentColor,
+                stroke: cardBg,
+                strokeWidth: 2,
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>

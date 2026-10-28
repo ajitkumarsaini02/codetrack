@@ -1423,10 +1423,10 @@
               },
               {
                 "id": "#1343",
-                "title": "Number of Sub-arrays Above Threshold",
+                "title": "Number of Sub-arrays of Size K and Average Greater Than or Equal to Threshold",
                 "difficulty": "Medium",
                 "platform": "LeetCode",
-                "url": "https://leetcode.com/problems/number-of-sub-arrays-above-threshold/"
+                "url": "https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/"
               },
               {
                 "id": "#1423",

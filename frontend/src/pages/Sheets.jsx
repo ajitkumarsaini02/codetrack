@@ -10,7 +10,6 @@ import {
   ChevronDown,
   ChevronUp,
   Sparkles,
-  Trophy,
   Check,
   AlertCircle,
   ChevronsDown,
@@ -24,7 +23,7 @@ const fallbackSheets = [
     name: "LeetCode DSA Mastery Sheet",
     tagline: "947 Curated Problems • 22 Phases • 115 Topics",
     platform: "leetcode",
-    iconColor: "#FFA116",
+    iconColor: "#F59E0B",
     description:
       "Comprehensive DSA roadmap covering all 115 sequential topics, with 10 questions per topic baseline and all unique problems.",
     totalProblems: 947,
@@ -37,7 +36,7 @@ const fallbackSheets = [
     name: "Codeforces DSA Mastery Sheet",
     tagline: "500 Curated Problems • Strict Sequential Order",
     platform: "codeforces",
-    iconColor: "#22C55E",
+    iconColor: "#60A5FA",
     description:
       "Topic-wise Codeforces problems with difficulty ratings (★ 800–2600).",
     totalProblems: 500,
@@ -441,23 +440,7 @@ const Sheets = () => {
       />
 
       {toastMessage.text && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "12px 18px",
-            background:
-              toastMessage.type === "error"
-                ? "rgba(239, 68, 68, 0.18)"
-                : "rgba(34, 197, 94, 0.18)",
-            border: `1px solid ${toastMessage.type === "error" ? "#EF4444" : "#22C55E"}`,
-            borderRadius: 12,
-            color: toastMessage.type === "error" ? "#FCA5A5" : "#4ADE80",
-            marginBottom: 24,
-            fontWeight: 500,
-          }}
-        >
+        <div className={`form-alert ${toastMessage.type === "error" ? "error" : "success"}`}>
           {toastMessage.type === "error" ? (
             <AlertCircle size={18} />
           ) : (
@@ -467,103 +450,106 @@ const Sheets = () => {
         </div>
       )}
 
-      {/* Sheet Selection Cards */}
+      {/* Roadmap Selector Hub */}
       <section className="sheets-selector-grid">
         {sheetsList.map((s) => {
           const isSelected = s.id === selectedSheetId;
+          const platClass = (s.platform || "").toLowerCase();
+          const pct = s.progressPercentage || 0;
           return (
             <div
               key={s.id}
-              className={`sheet-card ${isSelected ? "active" : ""}`}
+              className={`sheet-card ${platClass} ${isSelected ? "active" : ""}`}
               onClick={() => setSelectedSheetId(s.id)}
-              style={{
-                borderColor: isSelected ? s.iconColor || "#7C5CFC" : undefined,
-                boxShadow: isSelected
-                  ? `0 0 20px ${s.iconColor || "#7C5CFC"}30`
-                  : undefined,
-              }}
+              role="button"
+              tabIndex={0}
+              aria-pressed={isSelected}
             >
               <div className="sheet-card-top">
-                <span
-                  className="sheet-platform-pill"
-                  style={{
-                    backgroundColor: `${s.iconColor}20`,
-                    color: s.iconColor,
-                    borderColor: `${s.iconColor}40`,
-                  }}
-                >
+                <span className={`sheet-platform-pill ${platClass}`}>
                   {s.platform.toUpperCase()}
                 </span>
                 <span className="sheet-phase-badge">{s.phaseCount} Phases</span>
               </div>
 
-              <h3>{s.name}</h3>
-              <p className="sheet-tagline">{s.tagline}</p>
+              <div className="sheet-card-body">
+                <h3 className="sheet-card-title">{s.name}</h3>
+                <p className="sheet-tagline">{s.tagline}</p>
+              </div>
 
               <div className="sheet-card-footer">
-                <div className="sheet-meta">
-                  <strong>{s.totalProblems}</strong>
-                  <span>Problems</span>
+                <div className="sheet-meta-group">
+                  <div className="sheet-meta-item">
+                    <span className="sheet-meta-label">Curated</span>
+                    <strong className="sheet-meta-value">{s.totalProblems}</strong>
+                  </div>
+                  <div className="sheet-meta-divider" />
+                  <div className="sheet-meta-item">
+                    <span className="sheet-meta-label">Completed</span>
+                    <strong className="sheet-meta-value solved">{s.solvedCount || 0}</strong>
+                  </div>
                 </div>
 
-                <div className="sheet-meta">
-                  <strong
-                    style={{ color: s.solvedCount > 0 ? "#4ADE80" : undefined }}
-                  >
-                    {s.solvedCount || 0}
-                  </strong>
-                  <span>Solved</span>
+                <div className="sheet-progress-pill">
+                  <span>{pct}%</span>
                 </div>
+              </div>
 
-                <div className="sheet-progress-ring">
-                  <span>{s.progressPercentage || 0}%</span>
-                </div>
+              <div className="sheet-card-mini-track">
+                <div className="sheet-card-mini-fill" style={{ width: `${pct}%` }} />
               </div>
             </div>
           );
         })}
       </section>
 
-      {/* Overview Banner for Current Sheet */}
+      {/* Unified Roadmap Detail & Control Panel */}
       {currentSheet && (
         <section className="panel sheet-overview-panel">
-          <div className="sheet-overview-header">
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div className="sheet-overview-main">
+            <div className="sheet-overview-info">
+              <div className="sheet-overview-title-row">
                 <h2>{currentSheet.name}</h2>
-                <span className="platform-tag">{currentSheet.platform}</span>
+                <span className={`platform-tag ${(currentSheet.platform || "").toLowerCase()}`}>
+                  {currentSheet.platform}
+                </span>
+                <span className="roadmap-status-badge">
+                  {currentSheet.percentage >= 100 ? "Completed 🎉" : "In Progress"}
+                </span>
               </div>
-              <p className="sheet-overview-desc">
-                {currentSheet.description}
-              </p>
+              <p className="sheet-overview-desc">{currentSheet.description}</p>
             </div>
 
-            <div className="sheet-overall-stats">
-              <div className="overall-stat-item">
-                <Trophy size={20} style={{ color: currentSheet.iconColor }} />
-                <div>
-                  <strong>
-                    {currentSheet.solvedProblems || 0} /{" "}
-                    {currentSheet.totalProblems || 0}
-                  </strong>
-                  <span>Solved</span>
-                </div>
+            <div className="sheet-overview-kpis">
+              <div className="overview-kpi">
+                <span className="kpi-label">Solved</span>
+                <strong className="kpi-value solved">
+                  {currentSheet.solvedProblems || 0}
+                </strong>
+                <span className="kpi-sub">problems</span>
+              </div>
+              <div className="overview-kpi">
+                <span className="kpi-label">Remaining</span>
+                <strong className="kpi-value remaining">
+                  {Math.max(0, (currentSheet.totalProblems || 0) - (currentSheet.solvedProblems || 0))}
+                </strong>
+                <span className="kpi-sub">left</span>
+              </div>
+              <div className="overview-kpi">
+                <span className="kpi-label">Progress</span>
+                <strong className="kpi-value percentage">
+                  {currentSheet.percentage || 0}%
+                </strong>
+                <span className="kpi-sub">{currentSheet.phases?.length || 22} phases</span>
               </div>
             </div>
           </div>
 
           <div className="sheet-progress-bar-container">
-            <div className="sheet-progress-info">
-              <span>Roadmap Completion</span>
-              <strong>{currentSheet.percentage || 0}%</strong>
-            </div>
-            <div className="progress-track" style={{ height: 10 }}>
+            <div className="progress-track">
               <div
                 className="progress-fill"
-                style={{
-                  width: `${currentSheet.percentage || 0}%`,
-                  background: `linear-gradient(90deg, ${currentSheet.iconColor || "#7C5CFC"}, #3B82F6)`,
-                }}
+                style={{ width: `${currentSheet.percentage || 0}%` }}
               />
             </div>
           </div>
@@ -646,15 +632,8 @@ const Sheets = () => {
 
       {/* Sheet Content: Phases -> Topics -> Questions */}
       {loading ? (
-        <div
-          className="panel"
-          style={{ textAlign: "center", padding: 48, color: "#9CA3AF" }}
-        >
-          <Sparkles
-            size={28}
-            className="animate-spin"
-            style={{ margin: "0 auto 12px", color: "#818CF8" }}
-          />
+        <div className="panel loading-state sheet-loading-panel">
+          <Sparkles size={28} className="spinner" />
           <p>Loading curated sheet questions...</p>
         </div>
       ) : (

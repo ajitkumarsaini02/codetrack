@@ -175,22 +175,7 @@ const Settings = () => {
         </div>
 
         {message.text && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "10px 16px",
-              background:
-                message.type === "error"
-                  ? "rgba(239, 68, 68, 0.15)"
-                  : "rgba(34, 197, 94, 0.15)",
-              border: `1px solid ${message.type === "error" ? "#EF4444" : "#22C55E"}`,
-              borderRadius: 10,
-              color: message.type === "error" ? "#FCA5A5" : "#4ADE80",
-              marginBottom: 20,
-            }}
-          >
+          <div className={`form-alert ${message.type === "error" ? "error" : "success"}`}>
             {message.type === "error" ? (
               <AlertCircle size={18} />
             ) : (

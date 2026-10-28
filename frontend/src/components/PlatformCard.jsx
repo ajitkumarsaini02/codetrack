@@ -29,7 +29,7 @@ const PlatformCard = ({
   details = {},
   syncStatus,
   syncError,
-  color = "#7C5CFC",
+  color = "#D6AD70",
   profileUrl,
   onDelete,
   onSync,

@@ -7,15 +7,18 @@ const Button = ({
   disabled = false,
   type = "button",
   onClick,
+  className = "",
+  ...rest
 }) => {
   return (
     <button
       type={type}
-      className={`button button-${variant}`}
+      className={`button button-${variant} ${className}`.trim()}
       disabled={disabled || loading}
       onClick={onClick}
+      {...rest}
     >
-      {loading && <LoaderCircle size={17} className="spinner" />}
+      {loading && <LoaderCircle size={16} className="spinner" />}
       {children}
     </button>
   );

@@ -113,7 +113,7 @@ const ProblemTable = ({ problems = [], onStatusChange, onDelete }) => {
             <tr>
               <td
                 colSpan={onDelete ? 6 : 5}
-                style={{ textAlign: "center", padding: "28px", color: "#94A3B8" }}
+                className="table-empty-cell"
               >
                 No problems found.
               </td>

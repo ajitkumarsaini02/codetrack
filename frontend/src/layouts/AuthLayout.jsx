@@ -1,10 +1,11 @@
 import { Outlet, Link } from "react-router-dom";
+import Logo from "../components/Logo";
 
 const AuthLayout = () => {
   return (
     <div className="auth-layout">
       <Link to="/" className="auth-brand">
-        <img src="/logo-icon.png" alt="CodeTrack logo" />
+        <Logo size={34} />
         <span>CodeTrack</span>
       </Link>
 
