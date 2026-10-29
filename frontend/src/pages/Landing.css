@@ -507,34 +507,31 @@
   color: var(--text-muted);
 }
 
-.mock-chart-bars {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  height: 110px;
-  padding-top: 0.75rem;
-  gap: 0.5rem;
-}
-
-.bar-col {
-  flex: 1;
+.mock-line-chart-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  height: 100%;
-  justify-content: flex-end;
-}
-
-.bar-fill {
   width: 100%;
-  max-width: 28px;
-  background: linear-gradient(180deg, var(--accent) 0%, var(--primary) 100%);
-  border-radius: 4px 4px 0 0;
-  transition: height 0.3s ease;
+  gap: 0.65rem;
+  padding-top: 0.25rem;
 }
 
-.bar-col span {
+.mock-line-chart-svg {
+  width: 100%;
+  height: 120px;
+  overflow: visible;
+}
+
+.mock-grid-line {
+  stroke: var(--border);
+  stroke-dasharray: 4 4;
+  stroke-width: 1;
+}
+
+.mock-chart-days {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.5rem;
   font-size: 0.72rem;
   color: var(--text-muted);
 }

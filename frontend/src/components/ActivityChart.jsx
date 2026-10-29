@@ -106,10 +106,16 @@ const ActivityChart = ({ data }) => {
               dataKey="solved"
               name="Problems Solved"
               stroke={accentColor}
-              strokeWidth={2.2}
+              strokeWidth={2.4}
               fill="url(#activityGradient)"
+              dot={{
+                r: 3.5,
+                fill: accentColor,
+                stroke: cardBg,
+                strokeWidth: 1.5,
+              }}
               activeDot={{
-                r: 5,
+                r: 5.5,
                 fill: terracottaColor,
                 stroke: cardBg,
                 strokeWidth: 2,

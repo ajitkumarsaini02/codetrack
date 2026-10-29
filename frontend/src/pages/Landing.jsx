@@ -431,35 +431,148 @@ const Landing = () => {
                   <div className="mock-panel mock-activity">
                     <div className="mock-panel-title">
                       <h4>Activity Overview</h4>
-                      <span>This week</span>
+                      <span>Your coding practice this week</span>
                     </div>
-                    <div className="mock-chart-bars">
-                      <div className="bar-col">
-                        <div className="bar-fill" style={{ height: "45%" }} />
+                    <div className="mock-line-chart-container">
+                      <svg
+                        className="mock-line-chart-svg"
+                        viewBox="0 0 500 135"
+                        preserveAspectRatio="none"
+                      >
+                        <defs>
+                          <linearGradient
+                            id="mockLineGradient"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="0%"
+                              stopColor="var(--accent)"
+                              stopOpacity="0.32"
+                            />
+                            <stop
+                              offset="100%"
+                              stopColor="var(--accent)"
+                              stopOpacity="0.0"
+                            />
+                          </linearGradient>
+                        </defs>
+
+                        {/* Horizontal Dashed Grid Lines */}
+                        <line
+                          x1="0"
+                          y1="15"
+                          x2="500"
+                          y2="15"
+                          className="mock-grid-line"
+                        />
+                        <line
+                          x1="0"
+                          y1="50"
+                          x2="500"
+                          y2="50"
+                          className="mock-grid-line"
+                        />
+                        <line
+                          x1="0"
+                          y1="85"
+                          x2="500"
+                          y2="85"
+                          className="mock-grid-line"
+                        />
+                        <line
+                          x1="0"
+                          y1="120"
+                          x2="500"
+                          y2="120"
+                          className="mock-grid-line"
+                        />
+
+                        {/* Area Fill Under Curve */}
+                        <path
+                          d="M 25 118 C 60 115, 80 40, 110 40 C 145 40, 165 90, 190 90 C 220 90, 240 25, 265 25 C 295 25, 315 65, 345 65 C 375 65, 395 18, 420 18 C 445 18, 465 48, 480 48 L 480 120 L 25 120 Z"
+                          fill="url(#mockLineGradient)"
+                        />
+
+                        {/* Smooth Monotone Line Curve */}
+                        <path
+                          d="M 25 118 C 60 115, 80 40, 110 40 C 145 40, 165 90, 190 90 C 220 90, 240 25, 265 25 C 295 25, 315 65, 345 65 C 375 65, 395 18, 420 18 C 445 18, 465 48, 480 48"
+                          fill="none"
+                          stroke="var(--accent)"
+                          strokeWidth="2.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+
+                        {/* Data Point Dots along the line */}
+                        <circle
+                          cx="25"
+                          cy="118"
+                          r="3.5"
+                          fill="var(--accent)"
+                          stroke="var(--card)"
+                          strokeWidth="1.5"
+                        />
+                        <circle
+                          cx="110"
+                          cy="40"
+                          r="3.5"
+                          fill="var(--accent)"
+                          stroke="var(--card)"
+                          strokeWidth="1.5"
+                        />
+                        <circle
+                          cx="190"
+                          cy="90"
+                          r="3.5"
+                          fill="var(--accent)"
+                          stroke="var(--card)"
+                          strokeWidth="1.5"
+                        />
+                        <circle
+                          cx="265"
+                          cy="25"
+                          r="4"
+                          fill="var(--accent)"
+                          stroke="var(--card)"
+                          strokeWidth="1.5"
+                        />
+                        <circle
+                          cx="345"
+                          cy="65"
+                          r="3.5"
+                          fill="var(--accent)"
+                          stroke="var(--card)"
+                          strokeWidth="1.5"
+                        />
+                        <circle
+                          cx="420"
+                          cy="18"
+                          r="5.5"
+                          fill="var(--terracotta)"
+                          stroke="var(--card)"
+                          strokeWidth="2"
+                        />
+                        <circle
+                          cx="480"
+                          cy="48"
+                          r="3.5"
+                          fill="var(--accent)"
+                          stroke="var(--card)"
+                          strokeWidth="1.5"
+                        />
+                      </svg>
+
+                      {/* X-Axis Day Labels */}
+                      <div className="mock-chart-days">
                         <span>Mon</span>
-                      </div>
-                      <div className="bar-col">
-                        <div className="bar-fill" style={{ height: "80%" }} />
                         <span>Tue</span>
-                      </div>
-                      <div className="bar-col">
-                        <div className="bar-fill" style={{ height: "60%" }} />
                         <span>Wed</span>
-                      </div>
-                      <div className="bar-col">
-                        <div className="bar-fill" style={{ height: "95%" }} />
                         <span>Thu</span>
-                      </div>
-                      <div className="bar-col">
-                        <div className="bar-fill" style={{ height: "70%" }} />
                         <span>Fri</span>
-                      </div>
-                      <div className="bar-col">
-                        <div className="bar-fill" style={{ height: "100%" }} />
                         <span>Sat</span>
-                      </div>
-                      <div className="bar-col">
-                        <div className="bar-fill" style={{ height: "85%" }} />
                         <span>Sun</span>
                       </div>
                     </div>
