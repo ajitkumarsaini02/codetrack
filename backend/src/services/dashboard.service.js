@@ -74,7 +74,7 @@ const getDashboard = async (userId) => {
       trackedProblems: totalProblems,
       manuallySolved: solvedProblems,
       todaySolved,
-      totalSheetProblems: 2498,
+      totalSheetProblems: 1447,
       connectedPlatforms: platforms.length,
     },
     difficulty,

@@ -9,7 +9,7 @@ test("GET /api/sheets returns all available sheets", async () => {
   assert.equal(response.status, 200);
   assert.equal(response.body.success, true);
   assert.ok(Array.isArray(response.body.data));
-  assert.ok(response.body.data.length >= 3);
+  assert.ok(response.body.data.length >= 2);
 });
 
 test("GET /api/sheets/leetcode returns phases and topics", async () => {

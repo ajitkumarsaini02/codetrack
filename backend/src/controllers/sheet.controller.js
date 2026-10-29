@@ -23,28 +23,44 @@ const getSheets = async (req, res, next) => {
   try {
     const user = await getOptionalUser(req);
 
-    let userSolvedMap = new Map();
+    // If user is authenticated, query all solved problems for this user
+    let userSolvedTitlesByPlatform = new Map();
     if (user) {
       const solvedProblems = await Problem.find({
         user: user._id,
         status: "solved",
-      }).select("platform");
+      }).select("title platform");
 
       for (const p of solvedProblems) {
-        const plat = p.platform || "leetcode";
-        userSolvedMap.set(plat, (userSolvedMap.get(plat) || 0) + 1);
+        let plat = (p.platform || "leetcode").toLowerCase().trim();
+        if (plat === "geeksforgeeks") plat = "gfg";
+        if (!userSolvedTitlesByPlatform.has(plat)) {
+          userSolvedTitlesByPlatform.set(plat, new Set());
+        }
+        userSolvedTitlesByPlatform.get(plat).add(p.title.toLowerCase().trim());
       }
     }
 
     const summaries = sheets.map((sheet) => {
+      let plat = (sheet.platform || "").toLowerCase().trim();
+      if (plat === "geeksforgeeks") plat = "gfg";
+      const solvedTitles = userSolvedTitlesByPlatform.get(plat) || new Set();
+
       let totalProblems = 0;
+      let solvedCount = 0;
+
       sheet.phases.forEach((phase) => {
         phase.topics.forEach((topic) => {
           totalProblems += topic.problems.length;
+          if (user) {
+            topic.problems.forEach((prob) => {
+              if (solvedTitles.has(prob.title.toLowerCase().trim())) {
+                solvedCount++;
+              }
+            });
+          }
         });
       });
-
-      const solvedCount = user ? userSolvedMap.get(sheet.platform) || 0 : 0;
 
       return {
         id: sheet.id,
@@ -190,6 +206,7 @@ const trackSheetProblem = async (req, res, next) => {
 
     const nextStatus = status ? status.toLowerCase() : "solved";
     const cleanPlatform = platform ? platform.toLowerCase().trim() : "leetcode";
+    const normPlatform = cleanPlatform === "geeksforgeeks" ? "gfg" : cleanPlatform;
 
     let cleanDifficulty = difficulty || "Medium";
     if (
@@ -204,27 +221,55 @@ const trackSheetProblem = async (req, res, next) => {
       }
     }
 
-    const problem = await Problem.findOneAndUpdate(
-      {
+    const trimmedTitle = title.trim();
+    const escapedTitle = trimmedTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const titleRegex = new RegExp(`^${escapedTitle}$`, "i");
+
+    const platformFilter =
+      normPlatform === "gfg"
+        ? { $in: ["gfg", "geeksforgeeks"] }
+        : new RegExp(`^${normPlatform}$`, "i");
+
+    const existingProblem = await Problem.findOne({
+      user: req.user._id,
+      title: titleRegex,
+      platform: platformFilter,
+    });
+
+    const wasAlreadySolved = existingProblem?.status === "solved";
+    const isNowSolved = nextStatus === "solved";
+
+    let problem;
+    if (existingProblem) {
+      existingProblem.status = nextStatus;
+      if (isNowSolved && !wasAlreadySolved) {
+        existingProblem.solvedAt = new Date();
+      } else if (!isNowSolved && wasAlreadySolved) {
+        existingProblem.solvedAt = null;
+      }
+      if (difficulty) existingProblem.difficulty = cleanDifficulty;
+      if (topic && (!existingProblem.topics || existingProblem.topics.length === 0)) {
+        existingProblem.topics = [topic];
+      }
+      if (problemUrl && !existingProblem.problemUrl) {
+        existingProblem.problemUrl = problemUrl;
+      }
+      problem = await existingProblem.save();
+    } else {
+      problem = await Problem.create({
         user: req.user._id,
-        title: title.trim(),
-        platform: cleanPlatform,
-      },
-      {
-        user: req.user._id,
-        title: title.trim(),
-        platform: cleanPlatform,
+        title: trimmedTitle,
+        platform: normPlatform,
         difficulty: cleanDifficulty,
         topics: topic ? [topic] : [],
         problemUrl: problemUrl || "",
         status: nextStatus,
-        solvedAt: nextStatus === "solved" ? new Date() : null,
-      },
-      { upsert: true, new: true, runValidators: true },
-    );
+        solvedAt: isNowSolved ? new Date() : null,
+      });
+    }
 
     const todayStr = new Date().toISOString().split("T")[0];
-    if (nextStatus === "solved") {
+    if (isNowSolved && !wasAlreadySolved) {
       await DailyProgress.findOneAndUpdate(
         { user: req.user._id, date: todayStr },
         {
@@ -237,7 +282,7 @@ const trackSheetProblem = async (req, res, next) => {
         },
         { upsert: true, new: true },
       );
-    } else {
+    } else if (!isNowSolved && wasAlreadySolved) {
       await DailyProgress.findOneAndUpdate(
         { user: req.user._id, date: todayStr, problemsSolved: { $gt: 0 } },
         { $inc: { problemsSolved: -1 } },

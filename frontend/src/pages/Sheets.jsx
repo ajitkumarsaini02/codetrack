@@ -179,33 +179,12 @@ const Sheets = () => {
                     )
                   : 0,
             };
-
-            setSheetsList((prev) =>
-              prev.map((s) => {
-                if (
-                  s.id === selectedSheetId ||
-                  s.platform === (sheetData.platform || selectedSheetId)
-                ) {
-                  return {
-                    ...s,
-                    solvedCount: totalGuestSolved,
-                    progressPercentage:
-                      sheetData.totalProblems > 0
-                        ? Math.round(
-                            (totalGuestSolved / sheetData.totalProblems) * 100,
-                          )
-                        : 0,
-                  };
-                }
-                return s;
-              }),
-            );
           } else {
             // If logged in, sync any stored guest progress to cloud
             const guestMap = getGuestSolvedMap();
             const keys = Object.keys(guestMap);
             if (keys.length > 0) {
-              Promise.all(
+              await Promise.all(
                 keys.map((k) => {
                   const [plat, ...titleParts] = k.split(":");
                   return sheetApi.trackProblem({
@@ -214,15 +193,34 @@ const Sheets = () => {
                     status: "solved",
                   });
                 }),
-              )
-                .then(() => {
-                  localStorage.removeItem(GUEST_STORAGE_KEY);
-                })
-                .catch(() => null);
+              ).catch(() => null);
+              localStorage.removeItem(GUEST_STORAGE_KEY);
+              const freshRes = await sheetApi.getSheetById(selectedSheetId);
+              if (active && freshRes?.success && freshRes.data) {
+                sheetData = freshRes.data;
+              }
             }
           }
 
           setCurrentSheet(sheetData);
+
+          // Keep sheetsList synchronized with the loaded sheet data
+          setSheetsList((prev) =>
+            prev.map((s) => {
+              if (
+                s.id === selectedSheetId ||
+                s.platform === (sheetData.platform || selectedSheetId)
+              ) {
+                return {
+                  ...s,
+                  solvedCount: sheetData.solvedProblems || 0,
+                  totalProblems: sheetData.totalProblems || s.totalProblems,
+                  progressPercentage: sheetData.percentage || 0,
+                };
+              }
+              return s;
+            }),
+          );
 
           // All phases and topics start collapsed by default
           setExpandedPhases({});
@@ -271,99 +269,97 @@ const Sheets = () => {
   };
 
   const handleToggleSolved = async (problem, topicName) => {
-    const nextStatus = problem.status === "solved" ? "todo" : "solved";
+    const isCurrentSolved =
+      problem.status === "solved" || Boolean(problem.isSolved);
+    const nextStatus = isCurrentSolved ? "todo" : "solved";
+    const targetTitle = (problem.title || "").toLowerCase().trim();
 
-    // Optimistically update current sheet state
+    // 1. If guest, persist locally immediately
+    if (!isAuthenticated) {
+      saveGuestProblem(
+        currentSheet?.platform || selectedSheetId || "leetcode",
+        problem.title,
+        nextStatus,
+      );
+    }
+
+    // 2. Optimistically update current sheet state and compute exact overall solved count
     setCurrentSheet((prev) => {
       if (!prev) return prev;
+      let overallSolvedCount = 0;
       const updatedPhases = prev.phases.map((phase) => {
-        let phaseSolvedDelta = 0;
+        let phaseSolved = 0;
         const updatedTopics = phase.topics.map((topic) => {
-          let topicSolvedDelta = 0;
+          let topicSolved = 0;
           const updatedProblems = topic.problems.map((p) => {
-            if (p.id === problem.id || p.title === problem.title) {
-              const wasSolved = p.status === "solved";
+            const matches =
+              p.id === problem.id ||
+              (p.title && p.title.toLowerCase().trim() === targetTitle);
+
+            if (matches) {
               const nowSolved = nextStatus === "solved";
-              if (!wasSolved && nowSolved) {
-                topicSolvedDelta += 1;
-                phaseSolvedDelta += 1;
-              } else if (wasSolved && !nowSolved) {
-                topicSolvedDelta -= 1;
-                phaseSolvedDelta -= 1;
-              }
+              if (nowSolved) topicSolved++;
               return { ...p, status: nextStatus, isSolved: nowSolved };
             }
+
+            const wasSolved = p.status === "solved" || Boolean(p.isSolved);
+            if (wasSolved) topicSolved++;
             return p;
           });
 
-          const newSolvedCount = Math.max(
-            0,
-            (topic.solvedCount || 0) + topicSolvedDelta,
-          );
+          phaseSolved += topicSolved;
           return {
             ...topic,
             problems: updatedProblems,
-            solvedCount: newSolvedCount,
+            solvedCount: topicSolved,
             percentage:
               topic.totalCount > 0
-                ? Math.round((newSolvedCount / topic.totalCount) * 100)
+                ? Math.round((topicSolved / topic.totalCount) * 100)
                 : 0,
           };
         });
 
-        const newPhaseSolved = Math.max(
-          0,
-          (phase.solvedCount || 0) + phaseSolvedDelta,
-        );
+        overallSolvedCount += phaseSolved;
         return {
           ...phase,
           topics: updatedTopics,
-          solvedCount: newPhaseSolved,
+          solvedCount: phaseSolved,
           percentage:
             phase.totalCount > 0
-              ? Math.round((newPhaseSolved / phase.totalCount) * 100)
+              ? Math.round((phaseSolved / phase.totalCount) * 100)
               : 0,
         };
       });
 
-      const totalSolvedNow = updatedPhases.reduce(
-        (acc, p) => acc + (p.solvedCount || 0),
-        0,
+      const newPercentage =
+        prev.totalProblems > 0
+          ? Math.round((overallSolvedCount / prev.totalProblems) * 100)
+          : 0;
+
+      // 3. Immediately update sheetsList with the exact same overall count
+      setSheetsList((prevList) =>
+        prevList.map((s) => {
+          if (
+            s.id === selectedSheetId ||
+            s.platform === (prev.platform || selectedSheetId)
+          ) {
+            return {
+              ...s,
+              solvedCount: overallSolvedCount,
+              progressPercentage: newPercentage,
+            };
+          }
+          return s;
+        }),
       );
+
       return {
         ...prev,
         phases: updatedPhases,
-        solvedProblems: totalSolvedNow,
-        percentage:
-          prev.totalProblems > 0
-            ? Math.round((totalSolvedNow / prev.totalProblems) * 100)
-            : 0,
+        solvedProblems: overallSolvedCount,
+        percentage: newPercentage,
       };
     });
-
-    // Optimistically update summary card counts for the active sheet
-    setSheetsList((prev) =>
-      prev.map((s) => {
-        if (
-          s.id === selectedSheetId ||
-          s.platform === (currentSheet?.platform || selectedSheetId)
-        ) {
-          const newSolved = Math.max(
-            0,
-            (s.solvedCount || 0) + (nextStatus === "solved" ? 1 : -1),
-          );
-          return {
-            ...s,
-            solvedCount: newSolved,
-            progressPercentage:
-              s.totalProblems > 0
-                ? Math.round((newSolved / s.totalProblems) * 100)
-                : 0,
-          };
-        }
-        return s;
-      }),
-    );
 
     if (isAuthenticated) {
       try {
@@ -388,12 +384,6 @@ const Sheets = () => {
         );
       }
     } else {
-      saveGuestProblem(
-        currentSheet?.platform || selectedSheetId || "leetcode",
-        problem.title,
-        nextStatus,
-      );
-
       showToast(
         nextStatus === "solved"
           ? `Marked "${problem.title}" as Solved (Saved locally. Sign in to sync across devices)`
@@ -440,7 +430,9 @@ const Sheets = () => {
       />
 
       {toastMessage.text && (
-        <div className={`form-alert ${toastMessage.type === "error" ? "error" : "success"}`}>
+        <div
+          className={`form-alert ${toastMessage.type === "error" ? "error" : "success"}`}
+        >
           {toastMessage.type === "error" ? (
             <AlertCircle size={18} />
           ) : (
@@ -455,7 +447,19 @@ const Sheets = () => {
         {sheetsList.map((s) => {
           const isSelected = s.id === selectedSheetId;
           const platClass = (s.platform || "").toLowerCase();
-          const pct = s.progressPercentage || 0;
+          const displaySolved =
+            isSelected && currentSheet
+              ? currentSheet.solvedProblems || 0
+              : s.solvedCount || 0;
+          const displayTotal =
+            isSelected && currentSheet
+              ? currentSheet.totalProblems || s.totalProblems
+              : s.totalProblems;
+          const pct =
+            displayTotal > 0
+              ? Math.round((displaySolved / displayTotal) * 100)
+              : 0;
+
           return (
             <div
               key={s.id}
@@ -481,12 +485,14 @@ const Sheets = () => {
                 <div className="sheet-meta-group">
                   <div className="sheet-meta-item">
                     <span className="sheet-meta-label">Curated</span>
-                    <strong className="sheet-meta-value">{s.totalProblems}</strong>
+                    <strong className="sheet-meta-value">{displayTotal}</strong>
                   </div>
                   <div className="sheet-meta-divider" />
                   <div className="sheet-meta-item">
                     <span className="sheet-meta-label">Completed</span>
-                    <strong className="sheet-meta-value solved">{s.solvedCount || 0}</strong>
+                    <strong className="sheet-meta-value solved">
+                      {displaySolved}
+                    </strong>
                   </div>
                 </div>
 
@@ -496,7 +502,10 @@ const Sheets = () => {
               </div>
 
               <div className="sheet-card-mini-track">
-                <div className="sheet-card-mini-fill" style={{ width: `${pct}%` }} />
+                <div
+                  className="sheet-card-mini-fill"
+                  style={{ width: `${pct}%` }}
+                />
               </div>
             </div>
           );
@@ -510,11 +519,15 @@ const Sheets = () => {
             <div className="sheet-overview-info">
               <div className="sheet-overview-title-row">
                 <h2>{currentSheet.name}</h2>
-                <span className={`platform-tag ${(currentSheet.platform || "").toLowerCase()}`}>
+                <span
+                  className={`platform-tag ${(currentSheet.platform || "").toLowerCase()}`}
+                >
                   {currentSheet.platform}
                 </span>
                 <span className="roadmap-status-badge">
-                  {currentSheet.percentage >= 100 ? "Completed 🎉" : "In Progress"}
+                  {currentSheet.percentage >= 100
+                    ? "Completed 🎉"
+                    : "In Progress"}
                 </span>
               </div>
               <p className="sheet-overview-desc">{currentSheet.description}</p>
@@ -531,7 +544,11 @@ const Sheets = () => {
               <div className="overview-kpi">
                 <span className="kpi-label">Remaining</span>
                 <strong className="kpi-value remaining">
-                  {Math.max(0, (currentSheet.totalProblems || 0) - (currentSheet.solvedProblems || 0))}
+                  {Math.max(
+                    0,
+                    (currentSheet.totalProblems || 0) -
+                      (currentSheet.solvedProblems || 0),
+                  )}
                 </strong>
                 <span className="kpi-sub">left</span>
               </div>
@@ -540,7 +557,9 @@ const Sheets = () => {
                 <strong className="kpi-value percentage">
                   {currentSheet.percentage || 0}%
                 </strong>
-                <span className="kpi-sub">{currentSheet.phases?.length || 22} phases</span>
+                <span className="kpi-sub">
+                  {currentSheet.phases?.length || 22} phases
+                </span>
               </div>
             </div>
           </div>
@@ -690,8 +709,8 @@ const Sheets = () => {
                       const topicKey = `${phase.phaseId}_${topic.topicId}`;
                       const hasFilter = Boolean(
                         search.trim() ||
-                          difficultyFilter !== "All" ||
-                          statusFilter !== "All",
+                        difficultyFilter !== "All" ||
+                        statusFilter !== "All",
                       );
                       const isTopicExpanded = hasFilter
                         ? expandedTopics[topicKey] !== false
@@ -784,14 +803,17 @@ const Sheets = () => {
                                     problem.rating ||
                                     (typeof problem.difficulty === "string" &&
                                     problem.difficulty.startsWith("★")
-                                      ? problem.difficulty.replace("★", "").trim()
+                                      ? problem.difficulty
+                                          .replace("★", "")
+                                          .trim()
                                       : null);
 
                                   const isRatingDuplicate =
                                     Boolean(ratingVal) &&
                                     typeof problem.difficulty === "string" &&
                                     (problem.difficulty.includes("★") ||
-                                      problem.difficulty.trim() === String(ratingVal));
+                                      problem.difficulty.trim() ===
+                                        String(ratingVal));
 
                                   return (
                                     <div
@@ -848,7 +870,8 @@ const Sheets = () => {
                                           </span>
                                         ) : null}
 
-                                        {problem.difficulty && !isRatingDuplicate ? (
+                                        {problem.difficulty &&
+                                        !isRatingDuplicate ? (
                                           <span
                                             className={`difficulty-badge ${diffClass}`}
                                           >
