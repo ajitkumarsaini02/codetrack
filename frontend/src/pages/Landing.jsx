@@ -161,7 +161,7 @@ const Landing = () => {
       {/* Top Navigation Bar */}
       <header className="landing-nav-wrapper">
         <div className="landing-nav-container">
-          <Link to="/" className="landing-brand">
+          <Link to="/landing" className="landing-brand">
             <Logo size={30} />
             <span className="landing-brand-text">CodeTrack</span>
             <span className="landing-brand-badge">PRO</span>

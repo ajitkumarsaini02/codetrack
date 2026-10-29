@@ -1,4 +1,4 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import {
   LayoutDashboard,
@@ -16,6 +16,7 @@ import { useAuth } from "../hooks/useAuth";
 
 const Sidebar = ({ collapsed = false, mobileOpen = false, onCloseMobile }) => {
   const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const mainNav = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -39,6 +40,7 @@ const Sidebar = ({ collapsed = false, mobileOpen = false, onCloseMobile }) => {
 
   const handleLogout = () => {
     logout();
+    navigate("/", { replace: true });
     if (onCloseMobile) {
       onCloseMobile();
     }
@@ -51,7 +53,12 @@ const Sidebar = ({ collapsed = false, mobileOpen = false, onCloseMobile }) => {
       }`}
     >
       <div className="sidebar-logo">
-        <Link to="/dashboard" className="sidebar-brand-group" onClick={handleLinkClick}>
+        <Link
+          to="/landing"
+          className="sidebar-brand-group"
+          onClick={handleLinkClick}
+          title="CodeTrack Landing Page"
+        >
           <Logo size={28} />
           {(!collapsed || mobileOpen) && (
             <div className="sidebar-brand-text">

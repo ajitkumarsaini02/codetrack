@@ -4,7 +4,7 @@ import Logo from "../components/Logo";
 const AuthLayout = () => {
   return (
     <div className="auth-layout">
-      <Link to="/" className="auth-brand">
+      <Link to="/landing" className="auth-brand" title="Back to Landing Page">
         <Logo size={34} />
         <span>CodeTrack</span>
       </Link>
