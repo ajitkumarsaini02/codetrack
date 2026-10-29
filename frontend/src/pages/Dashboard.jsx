@@ -185,6 +185,11 @@ const Dashboard = () => {
   const totalSolved = liveDashboard?.summary?.totalSolved ?? 0;
   const trackedProblems = liveDashboard?.summary?.trackedProblems ?? 0;
   const manuallySolved = liveDashboard?.summary?.manuallySolved ?? 0;
+  const curatedSheetSolved =
+    liveDashboard?.summary?.curatedSheetSolved ??
+    (manuallySolved > 0 ? manuallySolved : 0);
+  const totalSheetProblems =
+    liveDashboard?.summary?.totalSheetProblems ?? 1447;
   const todaySolved = liveDashboard?.summary?.todaySolved ?? 0;
   const dailyGoal = user?.settings?.dailyGoal || 2;
 
@@ -203,10 +208,10 @@ const Dashboard = () => {
     {
       id: 1,
       title: "Problems Solved",
-      value: totalSolved,
-      subtitle: liveDashboard
+      value: totalSolved > 0 ? totalSolved : manuallySolved,
+      subtitle: liveDashboard && livePlatforms.length > 0
         ? "Synced across linked profiles"
-        : "Total problems completed",
+        : `${trackedProblems} personal problems tracked`,
       icon: Code2,
       color: "#739775",
       badge: "All Platforms",
@@ -224,14 +229,18 @@ const Dashboard = () => {
     {
       id: 3,
       title: "DSA Sheet Solved",
-      value: manuallySolved,
-      subtitle: `${trackedProblems > 0 ? trackedProblems : 2498} curated catalog`,
+      value: curatedSheetSolved,
+      subtitle: `${totalSheetProblems.toLocaleString()} curated catalog`,
       icon: Flame,
       color: "#E3B56C",
       progress:
-        trackedProblems > 0
-          ? (manuallySolved / trackedProblems) * 100
-          : (manuallySolved / 2498) * 100,
+        totalSheetProblems > 0
+          ? (curatedSheetSolved / totalSheetProblems) * 100
+          : 0,
+      badge:
+        totalSheetProblems > 0
+          ? `${Math.round((curatedSheetSolved / totalSheetProblems) * 100)}%`
+          : null,
     },
     {
       id: 4,
@@ -301,13 +310,11 @@ const Dashboard = () => {
     };
   });
 
-  // Accurate 7-day current week timeline (Mon to Sun)
+  // Accurate 7-day current week timeline (Mon to Sun) without UTC timezone offset drift
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const now = new Date();
   const dayIndex = (now.getDay() + 6) % 7; // 0 for Mon, 6 for Sun
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - dayIndex);
-  monday.setHours(0, 0, 0, 0);
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayIndex);
 
   const weekActivityMap = new Map();
   if (Array.isArray(liveDashboard?.activity)) {
@@ -319,9 +326,11 @@ const Dashboard = () => {
   }
 
   const activityData = daysOfWeek.map((dayName, idx) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + idx);
-    const dateStr = d.toISOString().split("T")[0];
+    const d = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + idx);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const dayNum = String(d.getDate()).padStart(2, "0");
+    const dateStr = `${y}-${m}-${dayNum}`;
     return {
       day: dayName,
       solved: weekActivityMap.get(dateStr) || 0,
@@ -386,15 +395,15 @@ const Dashboard = () => {
           <div className="panel-heading">
             <div className="dsa-progress-header">
               <div>
-                <h3>DSA Progress Tracker</h3>
+                <h3>DSA Difficulty Distribution</h3>
                 <p>
-                  {totalDifficultySolved.toLocaleString()} of{" "}
-                  {totalDifficultyTarget.toLocaleString()} catalog problems solved ({overallPercentage}%)
+                  {totalDifficultySolved.toLocaleString()} solved across Easy, Medium & Hard (
+                  {overallPercentage}% of benchmark)
                 </p>
               </div>
               <div className="dsa-total-badge">
                 <span className="badge-highlight">{totalDifficultySolved}</span>
-                <span className="badge-sub">Solved</span>
+                <span className="badge-sub">Categorized</span>
               </div>
             </div>
           </div>
@@ -426,8 +435,11 @@ const Dashboard = () => {
                 Curated DSA Sheets Practice
               </span>
               <strong className="sheet-tracker-count">
-                {manuallySolved} / {trackedProblems > 0 ? trackedProblems : 2498}{" "}
-                completed
+                {curatedSheetSolved} / {totalSheetProblems.toLocaleString()} completed (
+                {totalSheetProblems > 0
+                  ? Math.round((curatedSheetSolved / totalSheetProblems) * 100)
+                  : 0}
+                %)
               </strong>
             </div>
             <Link
