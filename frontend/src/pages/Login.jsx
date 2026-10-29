@@ -13,7 +13,8 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const rawFrom = location.state?.from?.pathname;
+  const from = rawFrom && rawFrom !== "/" ? rawFrom : "/dashboard";
 
   const handleSubmit = async (e) => {
     e.preventDefault();

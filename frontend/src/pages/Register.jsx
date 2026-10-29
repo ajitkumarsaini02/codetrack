@@ -48,7 +48,7 @@ const Register = () => {
         email: formData.email.trim(),
         password: formData.password,
       });
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(
         err.response?.data?.message ||

@@ -18,7 +18,7 @@ const Sidebar = ({ collapsed = false, mobileOpen = false, onCloseMobile }) => {
   const { user, isAuthenticated, logout } = useAuth();
 
   const mainNav = [
-    { name: "Dashboard", path: "/", icon: LayoutDashboard },
+    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "DSA Sheets", path: "/sheets", icon: Layers },
     { name: "Problems", path: "/problems", icon: Code2 },
     { name: "Leaderboard", path: "/leaderboard", icon: Trophy },
@@ -51,7 +51,7 @@ const Sidebar = ({ collapsed = false, mobileOpen = false, onCloseMobile }) => {
       }`}
     >
       <div className="sidebar-logo">
-        <Link to="/" className="sidebar-brand-group" onClick={handleLinkClick}>
+        <Link to="/dashboard" className="sidebar-brand-group" onClick={handleLinkClick}>
           <Logo size={28} />
           {(!collapsed || mobileOpen) && (
             <div className="sidebar-brand-text">
@@ -83,7 +83,7 @@ const Sidebar = ({ collapsed = false, mobileOpen = false, onCloseMobile }) => {
               <NavLink
                 key={item.path}
                 to={item.path}
-                end={item.path === "/"}
+                end={item.path === "/dashboard"}
                 className={({ isActive }) =>
                   `sidebar-link${isActive ? " active" : ""}`
                 }
