@@ -3964,7 +3964,7 @@
                 "title": "Minimum Cost to Move Chips",
                 "difficulty": "Easy",
                 "platform": "LeetCode",
-                "url": "https://leetcode.com/problems/minimum-cost-to-move-chips/"
+                "url": "https://leetcode.com/problems/minimum-cost-to-move-chips-to-the-same-position/"
               },
               {
                 "id": "#1710",
@@ -3978,7 +3978,7 @@
                 "title": "Minimum Operations to Make Array Increasing",
                 "difficulty": "Easy",
                 "platform": "LeetCode",
-                "url": "https://leetcode.com/problems/minimum-operations-to-make-array-increasing/"
+                "url": "https://leetcode.com/problems/minimum-operations-to-make-the-array-increasing/"
               },
               {
                 "id": "#2144",
@@ -3992,7 +3992,7 @@
                 "title": "Minimum Sum of Four Digit Number",
                 "difficulty": "Easy",
                 "platform": "LeetCode",
-                "url": "https://leetcode.com/problems/minimum-sum-of-four-digit-number/"
+                "url": "https://leetcode.com/problems/minimum-sum-of-four-digit-number-after-splitting-digits/"
               },
               {
                 "id": "#2224",
